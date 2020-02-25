@@ -3,7 +3,6 @@ package com.example.agree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -13,7 +12,7 @@ import javax.mail.internet.InternetAddress;
 
 public class MailTask {
 
-    private List<String> messages;
+    private List<MessageAgree> messages;
     private Properties properties;
 
     public MailTask() {
@@ -24,7 +23,7 @@ public class MailTask {
         properties.put("mail.imap.starttls.enable", "true");
     }
 
-    public List<String> getMessages() {
+    public List<MessageAgree> getMessages() {
         return messages;
     }
 
@@ -44,7 +43,7 @@ public class MailTask {
             int count = inbox.getMessageCount();
             Message[] messagesArr = inbox.getMessages(1, count);
             for (Message message : messagesArr) {
-                messages.add(((InternetAddress) message.getFrom()[0]).getAddress() + " : " + message.getSubject());
+                messages.add(new MessageAgree("", message.getSubject()));
             }
             inbox.close(false);
             store.close();
@@ -52,5 +51,4 @@ public class MailTask {
             e.printStackTrace();
         }
     }
-
 }

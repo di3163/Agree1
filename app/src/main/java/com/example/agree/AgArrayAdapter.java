@@ -1,25 +1,22 @@
 package com.example.agree;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.List;
 
-public class AgArrayAdapter extends ArrayAdapter<String> {
+public class AgArrayAdapter extends ArrayAdapter<MessageAgree> {
 
     private final Activity context;
-    private final List<String> values;
+    private final List<MessageAgree> values;
 
-    public AgArrayAdapter(Activity context, List<String> values) {
+    public AgArrayAdapter(Activity context, List<MessageAgree> values) {
         super(context, R.layout.row_mess, values);
         this.context = context;
         this.values = values;
@@ -48,7 +45,7 @@ public class AgArrayAdapter extends ArrayAdapter<String> {
         }else {
             holder = (ViewHolder) rowView.getTag();
         }
-        holder.textView.setText(values.get(position));
+        holder.textView.setText(values.get(position).subject);
         holder.imageView.setImageResource(R.drawable.ic_stop);
         // Изменение иконки
 //        String s = values.get(position);
@@ -59,6 +56,7 @@ public class AgArrayAdapter extends ArrayAdapter<String> {
 //        } else {
 //            holder.imageView.setImageResource(R.drawable.ok);
 //        }
+
         return rowView;
     }
 }

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayAllMessages(){
-        List<String> values = mailTask.getMessages();
+        List<MessageAgree> values = mailTask.getMessages();
         if(values.size() >0 ) {
             ListView listOfMessages = findViewById(R.id.listMess);
 //            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.str_mess, R.id.textView, values);

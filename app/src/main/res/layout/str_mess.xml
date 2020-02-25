@@ -13,12 +13,4 @@
         android:layout_alignParentTop="true"
         android:textStyle="normal"
         android:text="TextView" />
-<!--    <TextView-->
-<!--        android:id="@+id/textId"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:textStyle="normal"-->
-<!--        android:text="TextView" />-->
 </RelativeLayout>
