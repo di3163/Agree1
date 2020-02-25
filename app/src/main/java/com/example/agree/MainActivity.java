@@ -55,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
         List<String> values = mailTask.getMessages();
         if(values.size() >0 ) {
             ListView listOfMessages = findViewById(R.id.listMess);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.str_mess, R.id.textView, values);
-            listOfMessages.setAdapter(adapter);
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.str_mess, R.id.textView, values);
+//            listOfMessages.setAdapter(adapter);
+            listOfMessages.setAdapter(new AgArrayAdapter(this, values));
         }
     }
 }
