@@ -22,4 +22,8 @@ public class MessageAgree {
     public boolean isAgr() {
         return agr;
     }
+
+    public void setAgr(boolean agr) {
+        this.agr = agr;
+    }
 }

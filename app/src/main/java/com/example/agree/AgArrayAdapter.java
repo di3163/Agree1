@@ -47,16 +47,17 @@ public class AgArrayAdapter extends ArrayAdapter<MessageAgree> {
         }
         holder.textView.setText(values.get(position).subject);
         holder.imageView.setImageResource(R.drawable.ic_stop);
-        // Изменение иконки
-//        String s = values.get(position);
-//        if (s.startsWith("Windows7") || s.startsWith("iPhone")
-//                || s.startsWith("Solaris")) {
-//
-//            holder.imageView.setImageResource(R.drawable.no);
-//        } else {
-//            holder.imageView.setImageResource(R.drawable.ok);
-//        }
+
+        if (values.get(position).isAgr()){
+            holder.imageView.setImageResource(R.drawable.ic_ok);
+        }
 
         return rowView;
     }
+
+    public void onClickListViev(View view){
+
+    }
+
+
 }

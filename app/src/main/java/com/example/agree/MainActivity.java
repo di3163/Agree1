@@ -1,12 +1,10 @@
 package com.example.agree;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,11 +14,10 @@ public class MainActivity extends AppCompatActivity {
 
     MailTask mailTask;
     private RelativeLayout activitiMain;
-    private ListView listMess;
+    ListView listOfMessages;
     private TextView textViewInfo;
-    private Button buttonGetMList;
     AsTask asTask;
-    ArrayAdapter<String> adapter;
+    static List<MessageAgree> messageAgreeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +25,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         activitiMain = findViewById(R.id.activityMain);
         textViewInfo = findViewById(R.id.text_info);
+        listOfMessages = findViewById(R.id.listMess);
+        listOfMessages.setClickable(true);
         mailTask = new MailTask();
-        displayAllMessages();
 
+        listOfMessages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(position);
+                messageAgree.setAgr(true);
+                displayAllMessages();
+                return messageAgree.isAgr();
+            }
+        });
+
+        listOfMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object o = listOfMessages.getItemAtPosition(position);
+                String strItem = o.toString();
+            }
+        });
+
+        displayAllMessages();
     }
+
+
 
     public void onButtonClic(View v){
         asTask = new AsTask();
         asTask.execute();
     }
 
-    class AsTask extends AsyncTask<Void,  Void, String> {
 
+    class AsTask extends AsyncTask<Void,  Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
             mailTask.refreshListMessages();
@@ -52,12 +71,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayAllMessages(){
-        List<MessageAgree> values = mailTask.getMessages();
-        if(values.size() >0 ) {
-            ListView listOfMessages = findViewById(R.id.listMess);
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.str_mess, R.id.textView, values);
-//            listOfMessages.setAdapter(adapter);
-            listOfMessages.setAdapter(new AgArrayAdapter(this, values));
+        messageAgreeList = mailTask.getMessages();
+        if(messageAgreeList.size() >0 ) {
+            listOfMessages.setAdapter(new AgArrayAdapter(this, messageAgreeList));
         }
     }
+
 }
