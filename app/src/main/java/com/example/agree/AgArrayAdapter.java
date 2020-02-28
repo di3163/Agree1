@@ -16,15 +16,15 @@ public class AgArrayAdapter extends ArrayAdapter<MessageAgree> {
     private final Activity context;
     private final List<MessageAgree> values;
 
-    public AgArrayAdapter(Activity context, List<MessageAgree> values) {
+    AgArrayAdapter(Activity context, List<MessageAgree> values) {
         super(context, R.layout.row_mess, values);
         this.context = context;
         this.values = values;
     }
 
     static class ViewHolder{
-        public ImageView imageView;
-        public TextView textView;
+        ImageView imageView;
+        TextView textView;
     }
 
     @NonNull
@@ -45,7 +45,7 @@ public class AgArrayAdapter extends ArrayAdapter<MessageAgree> {
         }else {
             holder = (ViewHolder) rowView.getTag();
         }
-        holder.textView.setText(values.get(position).subject);
+        holder.textView.setText(values.get(position).getSubject());
         holder.imageView.setImageResource(R.drawable.ic_stop);
 
         if (values.get(position).isAgr()){

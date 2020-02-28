@@ -28,4 +28,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
     implementation files('libs\\android-mail-1.6.2.jar')
     implementation 'com.google.android.material:material:1.1.0'
+    implementation 'org.jsoup:jsoup:1.8.3'
+    implementation files('libs\\android-activation-1.6.2.jar')
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }

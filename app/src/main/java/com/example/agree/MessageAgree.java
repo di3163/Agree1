@@ -1,29 +1,31 @@
 package com.example.agree;
 
-public class MessageAgree {
-    String id;
-    String subject; //потом сюда поместим контрагента
-    boolean agr;
+class MessageAgree {
+    private String id;
+    private String subject;
+    private boolean agr;
 
-    public MessageAgree(String id, String subject) {
+    MessageAgree(String id, String subject) {
         this.id = id;
         this.subject = subject;
         agr = false;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public String getSubject() {
+    String getSubject() {
         return subject;
     }
 
-    public boolean isAgr() {
+    boolean isAgr() {
         return agr;
     }
 
-    public void setAgr(boolean agr) {
+    void setAgr(boolean agr) {
         this.agr = agr;
     }
+
+
 }
