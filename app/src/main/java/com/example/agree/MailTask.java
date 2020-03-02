@@ -1,7 +1,11 @@
 package com.example.agree;
 
+
+import android.app.Activity;
+
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,20 +17,27 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 class MailTask {
     private List<MessageAgree> messages;
     private Properties properties;
+    private final Activity context;
+    private String iD;
 
-    MailTask() {
+    MailTask(Activity context) {
+        this.context = context;
         messages = new ArrayList<>();
         properties = new Properties();
         properties.put("mail.imap.host", "imap.yandex.ru");
         properties.put("mail.imap.port", "993");
         properties.put("mail.imap.starttls.enable", "true");
+        iD = null;
     }
 
     List<MessageAgree> getMessages() {
@@ -51,6 +62,7 @@ class MailTask {
             Message[] messagesArr = inbox.getMessages(1, count);
             for (Message message : messagesArr) {
                 String subject = message.getSubject();
+                iD = subject.substring(subject.lastIndexOf("ID:"));
                 if (subject.contains("На согласование") && subject.contains("ID")) {
                     listOfContractors.clear();
                     try {
@@ -62,7 +74,7 @@ class MailTask {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String iD = subject.substring(subject.lastIndexOf("ID:"));
+
                     for (String contractor : listOfContractors){
                         messages.add(new MessageAgree(iD, contractor));
                     }
@@ -95,24 +107,31 @@ class MailTask {
         return listContractors;
     }
 
+    @NotNull
     private String parseMail(@NotNull MimeMultipart multipart) {
-        //String strParse = "";
         StringBuilder strParse = new StringBuilder();
         try {
             for (int i = 0; i < multipart.getCount(); i++) {
                 BodyPart part = multipart.getBodyPart(i);
                 if (part.isMimeType("text/plain")) {
-                    //strParse = strParse + "\n" + part.getContent();
                     strParse.append("\n");
                     strParse.append(part.getContent());
                 } else if (part.isMimeType("text/html")) {
                     String html = (String) part.getContent();
-                    //strParse = strParse + "\n" + org.jsoup.Jsoup.parse(html).text();
                     strParse.append("\n");
                     strParse.append(org.jsoup.Jsoup.parse(html).text());
                 } else if (part.getContent() instanceof MimeMultipart) {
-                    //strParse = strParse + parseMail((MimeMultipart) part.getContent());
                     strParse.append(parseMail((MimeMultipart) part.getContent()));
+                }
+                else if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                    MimeBodyPart mPart = (MimeBodyPart) multipart.getBodyPart(i);
+                    String decodedFilename = MimeUtility.decodeText(mPart.getFileName());
+                    //File fileAttach = new File(context.getFilesDir() + decodedFilename);
+                    if (!new File(context.getFilesDir() + decodedFilename).exists()) {
+                        mPart.saveFile(new File(context.getFilesDir() + decodedFilename));
+
+                    }
+                    MainActivity.listFilesFromMail.add(new FilesFromMail(decodedFilename, iD));
                 }
             }
         } catch (IOException e) {

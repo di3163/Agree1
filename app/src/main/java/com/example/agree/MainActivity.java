@@ -8,6 +8,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewInfo;
     AsTask asTask;
     static List<MessageAgree> messageAgreeList;
+    static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         textViewInfo = findViewById(R.id.text_info);
         listOfMessages = findViewById(R.id.listMess);
         listOfMessages.setClickable(true);
-        mailTask = new MailTask();
+        mailTask = new MailTask(this);
 
         listOfMessages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
