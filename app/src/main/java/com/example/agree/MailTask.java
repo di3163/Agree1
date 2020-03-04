@@ -76,7 +76,12 @@ class MailTask {
                     }
 
                     for (String contractor : listOfContractors){
-                        messages.add(new MessageAgree(iD, contractor));
+                        String[] contractorParam = contractor.split("#");
+                        if(contractorParam.length == 2) {
+                            messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0]));
+                        }else {
+                            //error message incorrect mail format
+                        }
                     }
                 }
             }
@@ -93,13 +98,13 @@ class MailTask {
         int index = Arrays.asList(stringsMess).indexOf("Коммент из карточки клиента");
         if (index != -1){
             int numOfClient = Integer.parseInt(stringsMess[index+2]);
-            listContractors.add(stringsMess[index+4]);
+            listContractors.add("1#"+stringsMess[index+4]);
             numOfClient++;
             for (int k = index+5; k < stringsMess.length; k++ ){
 
                 String currentString = stringsMess[k];
                 if (currentString.length() == 1 && Integer.parseInt(currentString) == numOfClient){
-                    listContractors.add(stringsMess[k+2]);
+                    listContractors.add(currentString+"#"+stringsMess[k+2]);
                     numOfClient++;
                 }
             }

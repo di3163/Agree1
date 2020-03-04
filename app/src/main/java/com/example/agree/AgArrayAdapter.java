@@ -48,8 +48,14 @@ public class AgArrayAdapter extends ArrayAdapter<MessageAgree> {
         holder.textView.setText(values.get(position).getSubject());
         holder.imageView.setImageResource(R.drawable.ic_stop);
 
-        if (values.get(position).isAgr()){
+        if (values.get(position).getAgrStat().equals("+")){
             holder.imageView.setImageResource(R.drawable.ic_ok);
+        }else if (values.get(position).getAgrStat().equals("*")){
+            holder.imageView.setImageResource(R.drawable.ic_wait);
+        }else if (values.get(position).getAgrStat().equals("/")){
+            holder.imageView.setImageResource(R.drawable.ic_ab);
+        }else {
+            holder.imageView.setImageResource(R.drawable.ic_stop);
         }
 
         return rowView;

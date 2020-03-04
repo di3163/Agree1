@@ -3,12 +3,14 @@ package com.example.agree;
 class MessageAgree {
     private String id;
     private String subject;
-    private boolean agr;
+    private String agr;
+    private String agrStat;
 
-    MessageAgree(String id, String subject) {
+    MessageAgree(String id, String subject, String agrStat) {
         this.id = id;
         this.subject = subject;
-        agr = false;
+        this.agrStat = agrStat;
+        this.agr = agrStat;
     }
 
     String getId() {
@@ -19,13 +21,15 @@ class MessageAgree {
         return subject;
     }
 
-    boolean isAgr() {
+    public String getAgrStat() {
+        return agrStat;
+    }
+
+    public void setAgrStat(String agrStat) {
+        this.agrStat = agrStat;
+    }
+
+    public String getAgr() {
         return agr;
     }
-
-    void setAgr(boolean agr) {
-        this.agr = agr;
-    }
-
-
 }
