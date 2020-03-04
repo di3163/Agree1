@@ -1,6 +1,8 @@
 package com.example.agree;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     static List<MessageAgree> messageAgreeList;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         listOfMessages = findViewById(R.id.listMess);
         listOfMessages.setClickable(true);
         mailTask = new MailTask(this);
+
 
         listOfMessages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -45,8 +49,12 @@ public class MainActivity extends AppCompatActivity {
         listOfMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object o = listOfMessages.getItemAtPosition(position);
-                String strItem = o.toString();
+                //Object o = listOfMessages.getItemAtPosition(position);
+                MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(position);
+                Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
+                intent.putExtra("messageID", messageAgree.getId());
+                //intent.putExtra("keyName", list.get(i).getFileName());
+                startActivity(intent);
             }
         });
 

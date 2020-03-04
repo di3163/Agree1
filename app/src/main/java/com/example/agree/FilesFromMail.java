@@ -11,5 +11,11 @@ public class FilesFromMail {
         this.iD = iD;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
 
+    public String getiD() {
+        return iD;
+    }
 }

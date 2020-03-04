@@ -62,8 +62,8 @@ class MailTask {
             Message[] messagesArr = inbox.getMessages(1, count);
             for (Message message : messagesArr) {
                 String subject = message.getSubject();
-                iD = subject.substring(subject.lastIndexOf("ID:"));
                 if (subject.contains("На согласование") && subject.contains("ID")) {
+                    iD = subject.substring(subject.lastIndexOf("ID:"));
                     listOfContractors.clear();
                     try {
                         Object content = message.getContent();
