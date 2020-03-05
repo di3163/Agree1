@@ -5,12 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Gravity;
+
+
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -18,12 +19,16 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    MailTask mailTask;
+    static MailTask mailTask;
     private RelativeLayout activitiMain;
     ListView listOfMessages;
     private TextView textViewInfo;
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     static List<MessageAgree> messageAgreeList;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
     private ImageView stop, ok, wait, ab;
+    static String infoString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,17 @@ public class MainActivity extends AppCompatActivity {
         listOfMessages = findViewById(R.id.listMess);
         listOfMessages.setClickable(true);
         mailTask = new MailTask(this);
+        mailTask.loadSettings();
+        displayAllMessages();
+        infoString = "";
+        startService(new Intent(this, MailService.class));
+//        new Timer().schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                asTask = new AsTask();
+//                asTask.execute();
+//            }
+//        },0, 300000);
 
 
         listOfMessages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -66,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(pos);
-                        messageAgree.setAgrStat(messageAgree.getAgr());
+                        messageAgree.setAgrStat(messageAgree.getAgrNumInMail());
                         popupWindow.dismiss();
                         displayAllMessages();
                     }
@@ -139,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
         protected void onPostExecute(String result){
-            textViewInfo.setText("Список сообщений обновлен");
+            infoString = "Список сообщений обновлен " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+            textViewInfo.setText(infoString);
             displayAllMessages();
         }
     }
@@ -151,4 +169,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        mailTask.saveSettings();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        textViewInfo.setText(infoString);
+        super.onRestart();
+    }
+
+    protected void onResume() {
+        textViewInfo.setText(infoString);
+        super.onResume();
+    }
 }

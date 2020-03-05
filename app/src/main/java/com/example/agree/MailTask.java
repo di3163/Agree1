@@ -6,12 +6,16 @@ import android.app.Activity;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -44,51 +48,77 @@ class MailTask {
         return messages;
     }
 
+    public void setMessages(List<MessageAgree> messages) {
+        this.messages = messages;
+    }
+
     private void purgeMessagesList(){
         if (messages.size() > 0)
         messages.clear();
     }
 
+    private List<String> getArrId(){
+        List<String> listId = new ArrayList<>();
+        for (MessageAgree mid : messages){
+            listId.add(mid.getId());
+        }
+        return listId;
+    }
+
     void refreshListMessages(){
         List<String> listOfContractors = new ArrayList<>();
-        purgeMessagesList();
-        Session session = Session.getDefaultInstance(properties);
-        try {
-            Store store = session.getStore("imaps");
-            store.connect("imap.yandex.ru", "", "");
-            Folder inbox = store.getFolder("vintegra");
-            inbox.open(Folder.READ_ONLY);
-            int count = inbox.getMessageCount();
-            Message[] messagesArr = inbox.getMessages(1, count);
-            for (Message message : messagesArr) {
-                String subject = message.getSubject();
-                if (subject.contains("На согласование") && subject.contains("ID")) {
-                    iD = subject.substring(subject.lastIndexOf("ID:"));
-                    listOfContractors.clear();
-                    try {
-                        Object content = message.getContent();
-                        if (content instanceof Multipart){
-                            MimeMultipart multipart = (MimeMultipart) content;
-                            listOfContractors = contNames(parseMail(multipart));
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        //purgeMessagesList();
 
-                    for (String contractor : listOfContractors){
-                        String[] contractorParam = contractor.split("#");
-                        if(contractorParam.length == 2) {
-                            messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0]));
-                        }else {
-                            //error message incorrect mail format
+        List<String> listId = new ArrayList<>();
+        synchronized (messages) {
+            if (messages.size() != 0) {
+                listId = getArrId();
+            }
+
+            Session session = Session.getDefaultInstance(properties);
+            try {
+                Store store = session.getStore("imaps");
+                store.connect("imap.yandex.ru", "", "");
+                Folder inbox = store.getFolder("vintegra");
+                inbox.open(Folder.READ_ONLY);
+                int count = inbox.getMessageCount();
+                Message[] messagesArr = inbox.getMessages(1, count);
+                for (Message message : messagesArr) {
+                    String subject = message.getSubject();
+                    if (subject.contains("На согласование") && subject.contains("ID")) {
+                        iD = subject.substring(subject.lastIndexOf("ID:"));
+                        if (listId.size() != 0) {
+                            if (listId.contains(iD))
+                                continue;
+                        }
+                        listOfContractors.clear();
+                        try {
+                            Object content = message.getContent();
+                            if (content instanceof Multipart) {
+                                MimeMultipart multipart = (MimeMultipart) content;
+                                listOfContractors = contNames(parseMail(multipart));
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        for (String contractor : listOfContractors) {
+                            String[] contractorParam = contractor.split("#");
+                            if (contractorParam.length == 2) {
+                                messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0]));
+                            } else {
+                                //error message incorrect mail format
+                            }
                         }
                     }
                 }
+                inbox.close(false);
+                store.close();
+                Collections.sort(messages);
+
+            } catch (MessagingException e) {
+                e.printStackTrace();
             }
-            inbox.close(false);
-            store.close();
-        }catch (MessagingException e){
-            e.printStackTrace();
         }
     }
 
@@ -146,4 +176,29 @@ class MailTask {
         }
         return strParse.toString();
     }
+
+    void saveSettings(){
+        try {
+            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds.dat"));
+            objectOS.writeObject(new ArrayList<MessageAgree>(getMessages()));
+            objectOS.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    void loadSettings(){
+        File fileSer = new File(context.getFilesDir() + "/ds.dat");
+        if (fileSer.exists()){
+            try {
+                ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
+                List<MessageAgree> list = (List<MessageAgree>) objectIS.readObject();
+                setMessages(list);
+                objectIS.close();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
