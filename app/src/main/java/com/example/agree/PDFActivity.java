@@ -58,7 +58,8 @@ public class PDFActivity extends AppCompatActivity {
             displayPage(currentPage);
         } catch (Exception e) {
             //Toast.makeText(this, "PDF-файл защищен паролем.", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            MainActivity.infoString = e.toString();
+            //e.printStackTrace();
         }
     }
 
@@ -71,7 +72,8 @@ public class PDFActivity extends AppCompatActivity {
             pdfRenderer = new PdfRenderer(descriptor);
         } catch (Exception e) {
             //Toast.makeText(this, "Ошибка", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
+            //e.printStackTrace();
+            MainActivity.infoString = e.toString();
         }
     }
 
@@ -115,7 +117,8 @@ public class PDFActivity extends AppCompatActivity {
         try {
             closePdfRenderer();
         } catch (IOException e) {
-            e.printStackTrace();
+            MainActivity.infoString = e.toString();
+            //e.printStackTrace();
         }
         super.onStop();
     }

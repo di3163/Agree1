@@ -1,22 +1,22 @@
 package com.example.agree;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-class MessageAgree implements Serializable, Comparable<MessageAgree>{
+
+//class MessageAgree implements Serializable, Comparable<MessageAgree>{
+class MessageAgree implements Serializable{
     private String id;
     private String subject;
     private String agrNumInMail;
     private String agrStat;
-    private Calendar calendar;
+    //private Calendar calendar;
 
     MessageAgree(String id, String subject, String agrStat) {
         this.id = id;
         this.subject = subject;
         this.agrStat = agrStat;
         this.agrNumInMail = agrStat;
-        this.calendar = new GregorianCalendar();
+        //this.calendar = new GregorianCalendar();
     }
 
     String getId() {
@@ -39,12 +39,12 @@ class MessageAgree implements Serializable, Comparable<MessageAgree>{
         return agrNumInMail;
     }
 
-    public Calendar getCalendar() {
-        return calendar;
-    }
-
-    @Override
-    public int compareTo(MessageAgree o) {
-        return getCalendar().compareTo(o.getCalendar());
-    }
+//    public Calendar getCalendar() {
+//        return calendar;
+//    }
+//
+//    @Override
+//    public int compareTo(MessageAgree o) {
+//        return getCalendar().compareTo(o.getCalendar());
+//    }
 }

@@ -1,14 +1,17 @@
 package com.example.agree;
 
-import java.io.File;
+import java.io.Serializable;
+import java.util.Date;
 
-public class FilesFromMail {
+public class FilesFromMail implements Serializable {
     String fileName;
     String iD;
+    Date dateFile;
 
     public FilesFromMail(String fileName, String iD) {
         this.fileName = fileName;
         this.iD = iD;
+        dateFile = new Date();
     }
 
     public String getFileName() {
@@ -17,5 +20,9 @@ public class FilesFromMail {
 
     public String getiD() {
         return iD;
+    }
+
+    public Date getDateFile() {
+        return dateFile;
     }
 }

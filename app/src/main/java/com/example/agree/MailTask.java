@@ -11,9 +11,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.BodyPart;
@@ -99,7 +102,8 @@ class MailTask {
                                 listOfContractors = contNames(parseMail(multipart));
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            MainActivity.infoString = e.toString();
+                            //e.printStackTrace();
                         }
 
                         for (String contractor : listOfContractors) {
@@ -107,6 +111,7 @@ class MailTask {
                             if (contractorParam.length == 2) {
                                 messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0]));
                             } else {
+                                MainActivity.infoString = "incorrect mail format " + iD;
                                 //error message incorrect mail format
                             }
                         }
@@ -114,10 +119,11 @@ class MailTask {
                 }
                 inbox.close(false);
                 store.close();
-                Collections.sort(messages);
+                //Collections.sort(messages);
 
             } catch (MessagingException e) {
-                e.printStackTrace();
+                MainActivity.infoString = e.toString();
+                //e.printStackTrace();
             }
         }
     }
@@ -170,33 +176,73 @@ class MailTask {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            MainActivity.infoString = e.toString();
+            //e.printStackTrace();
         } catch (MessagingException e) {
-            e.printStackTrace();
+            MainActivity.infoString = e.toString();
+            //e.printStackTrace();
         }
         return strParse.toString();
     }
 
+    void delOldFiles(){
+        List<FilesFromMail> listF = MainActivity.listFilesFromMail;
+        for (FilesFromMail currentF : listF){
+            File file = new File(context.getFilesDir() + currentF.getFileName());
+            Path path = file.toPath();
+            if (file.exists()) {
+                try {
+                    BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+                    if((new Date().getTime() - attrs.creationTime().toMillis())/(24*60*60*1000) > 1){
+                        file.delete();
+                    }
+                } catch (IOException e) {
+                    MainActivity.infoString = e.toString();
+                    //e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
     void saveSettings(){
         try {
-            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds.dat"));
+            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds2.dat"));
             objectOS.writeObject(new ArrayList<MessageAgree>(getMessages()));
+            objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
             objectOS.close();
         }catch (Exception e){
-            e.printStackTrace();
+            MainActivity.infoString = e.toString();
+            //e.printStackTrace();
         }
     }
 
     void loadSettings(){
-        File fileSer = new File(context.getFilesDir() + "/ds.dat");
+        File fileSer = new File(context.getFilesDir() + "/ds2.dat");
         if (fileSer.exists()){
             try {
                 ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
                 List<MessageAgree> list = (List<MessageAgree>) objectIS.readObject();
+//                synchronized (messages) {
+//                    for (MessageAgree currentM : list) {
+//                        if (!messages.contains(currentM)) {
+//                            messages.add(currentM);
+//                        }
+//                    }
+//                }
                 setMessages(list);
+                List<FilesFromMail> listF = (List<FilesFromMail>) objectIS.readObject();
+//                    for(FilesFromMail currentF : listF){
+//                        if (!MainActivity.listFilesFromMail.contains(currentF)){
+//                            if (new File(context.getFilesDir() + currentF.getFileName()).exists())
+//                            MainActivity.listFilesFromMail.add(currentF);
+//                        }
+//                    }
+                MainActivity.listFilesFromMail = listF;
                 objectIS.close();
             } catch (Exception e){
-                e.printStackTrace();
+                MainActivity.infoString = e.toString();
+                //e.printStackTrace();
             }
         }
     }

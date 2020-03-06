@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,10 +33,12 @@ public class MainActivity extends AppCompatActivity {
     ListView listOfMessages;
     private TextView textViewInfo;
     AsTask asTask;
-    static List<MessageAgree> messageAgreeList;
+    //List<MessageAgree> messageAgreeList;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
     private ImageView stop, ok, wait, ab;
     static String infoString;
+    Timer mTimer = new Timer();
+    final Handler uiHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +50,22 @@ public class MainActivity extends AppCompatActivity {
         listOfMessages.setClickable(true);
         mailTask = new MailTask(this);
         mailTask.loadSettings();
-        displayAllMessages();
         infoString = "";
-        startService(new Intent(this, MailService.class));
-//        new Timer().schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                asTask = new AsTask();
-//                asTask.execute();
-//            }
-//        },0, 300000);
 
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mailTask.refreshListMessages();
+                infoString = "Список сообщений обновлен " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        textViewInfo.setText(infoString);
+                        displayAllMessages();
+                    }
+                });
+            }
+        }, 0L, 60L * 5000);
 
         listOfMessages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -130,24 +137,18 @@ public class MainActivity extends AppCompatActivity {
         listOfMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Object o = listOfMessages.getItemAtPosition(position);
                 MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
                 intent.putExtra("messageID", messageAgree.getId());
-                //intent.putExtra("keyName", list.get(i).getFileName());
                 startActivity(intent);
             }
         });
-
-        displayAllMessages();
     }
-
 
     public void onButtonClic(View v){
         asTask = new AsTask();
         asTask.execute();
     }
-
 
     class AsTask extends AsyncTask<Void,  Void, String> {
         @Override
@@ -163,26 +164,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayAllMessages(){
-        messageAgreeList = mailTask.getMessages();
-        if(messageAgreeList.size() >0 ) {
-            listOfMessages.setAdapter(new AgArrayAdapter(this, messageAgreeList));
+        //messageAgreeList = mailTask.getMessages();
+        if(mailTask.getMessages().size() >0 ) {
+            listOfMessages.setAdapter(new AgArrayAdapter(this, mailTask.getMessages()));
         }
+        mailTask.delOldFiles();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        mailTask.saveSettings();
+        super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        mailTask.saveSettings();
         super.onDestroy();
     }
 
     @Override
     protected void onRestart() {
-        textViewInfo.setText(infoString);
         super.onRestart();
     }
 
     protected void onResume() {
         textViewInfo.setText(infoString);
+        displayAllMessages();
         super.onResume();
     }
 }
