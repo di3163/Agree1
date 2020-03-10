@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".PDFActivity"></activity>
         <activity android:name=".FileChooseActivity" />
+        <activity android:name=".LogActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

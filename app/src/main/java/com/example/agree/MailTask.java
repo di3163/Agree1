@@ -36,6 +36,7 @@ class MailTask {
     private Properties properties;
     private final Activity context;
     private String iD;
+    private String logFileName;
 
     MailTask(Activity context) {
         this.context = context;
@@ -45,6 +46,7 @@ class MailTask {
         properties.put("mail.imap.port", "993");
         properties.put("mail.imap.starttls.enable", "true");
         iD = null;
+        logFileName = context.getFilesDir() + "/log.dat";
     }
 
     List<MessageAgree> getMessages() {
@@ -102,7 +104,8 @@ class MailTask {
                                 listOfContractors = contNames(parseMail(multipart));
                             }
                         } catch (IOException e) {
-                            MainActivity.infoString = e.toString();
+                            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+                            //MainActivity.infoString = e.toString();
                             //e.printStackTrace();
                         }
 
@@ -122,7 +125,8 @@ class MailTask {
                 //Collections.sort(messages);
 
             } catch (MessagingException e) {
-                MainActivity.infoString = e.toString();
+                ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+                //MainActivity.infoString = e.toString();
                 //e.printStackTrace();
             }
         }
@@ -176,10 +180,12 @@ class MailTask {
                 }
             }
         } catch (IOException e) {
-            MainActivity.infoString = e.toString();
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+            //MainActivity.infoString = e.toString();
             //e.printStackTrace();
         } catch (MessagingException e) {
-            MainActivity.infoString = e.toString();
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+            //MainActivity.infoString = e.toString();
             //e.printStackTrace();
         }
         return strParse.toString();
@@ -197,7 +203,8 @@ class MailTask {
                         file.delete();
                     }
                 } catch (IOException e) {
-                    MainActivity.infoString = e.toString();
+                    ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+                    //MainActivity.infoString = e.toString();
                     //e.printStackTrace();
                 }
             }
@@ -212,7 +219,8 @@ class MailTask {
             objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
             objectOS.close();
         }catch (Exception e){
-            MainActivity.infoString = e.toString();
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+            //MainActivity.infoString = e.toString();
             //e.printStackTrace();
         }
     }
@@ -241,7 +249,8 @@ class MailTask {
                 MainActivity.listFilesFromMail = listF;
                 objectIS.close();
             } catch (Exception e){
-                MainActivity.infoString = e.toString();
+                ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+                //MainActivity.infoString = e.toString();
                 //e.printStackTrace();
             }
         }

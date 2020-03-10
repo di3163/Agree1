@@ -9,11 +9,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FileChooseActivity extends AppCompatActivity {
-    private List<String> currentMessageFilesList = new ArrayList<>();
+    private List<String> currentFilesList;
     ListView listOfFiles;
 
     @Override
@@ -23,23 +25,48 @@ public class FileChooseActivity extends AppCompatActivity {
         listOfFiles = findViewById(R.id.listFiles);
         String messageID = getIntent().getStringExtra("messageID");
 
-        for (FilesFromMail currentFile : MainActivity.listFilesFromMail){
-            if(currentFile.getiD().equals(messageID))
-                currentMessageFilesList.add(currentFile.getFileName());
+        if(messageID.equals("ServiseTasks")){
+            currentFilesList = getFilesFromDir(getFilesDir().toString());
+        }else {
+            currentFilesList = new ArrayList<>();
+            for (FilesFromMail currentFile : MainActivity.listFilesFromMail) {
+                if (currentFile.getiD().equals(messageID))
+                    currentFilesList.add(currentFile.getFileName());
+            }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.row_file, R.id.textFile, currentMessageFilesList);
-        listOfFiles.setAdapter(adapter);
+        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.row_file, R.id.textFile, currentFilesList);
+        //listOfFiles.setAdapter(adapter);
+
+        listOfFiles.setAdapter(new FileArrayAdapter(this, currentFilesList));
+
 
         listOfFiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(FileChooseActivity.this, PDFActivity.class);
-                intent.putExtra("fileName", currentMessageFilesList.get(i));
+                if(currentFilesList.get(i).contains("log.dat")){
+                    Intent intent = new Intent(FileChooseActivity.this, LogActivity.class);
+                    intent.putExtra("fileName", currentFilesList.get(i));
+                    startActivity(intent);
+                }else if(currentFilesList.get(i).contains(".pdf")) {
+                    Intent intent = new Intent(FileChooseActivity.this, PDFActivity.class);
+                    intent.putExtra("fileName", currentFilesList.get(i));
 //                intent.putExtra("keyName", list.get(i).getFileName());
 //                intent.putExtra("fileName", list.get(i).getFilePath());
-                startActivity(intent);
+                    startActivity(intent);
+                }
             }
         });
+
+    }
+
+    private List<String> getFilesFromDir(String pathname){
+        File folder = new File(pathname);
+        List<String> listFiles = new ArrayList<>();
+        ArrayList<File> listTemp = new ArrayList<File>(Arrays.asList(folder.listFiles()));
+        for (File entryFile : listTemp){
+            if (entryFile.isFile()) listFiles.add(entryFile.getName());
+        }
+        return listFiles;
     }
 
 

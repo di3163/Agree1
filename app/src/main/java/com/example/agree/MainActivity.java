@@ -11,14 +11,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -148,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonClic(View v){
         asTask = new AsTask();
         asTask.execute();
+    }
+
+    public void onButtonFilesClic(View v){
+        Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
+        intent.putExtra("messageID", "ServiseTasks");
+        startActivity(intent);
     }
 
     class AsTask extends AsyncTask<Void,  Void, String> {

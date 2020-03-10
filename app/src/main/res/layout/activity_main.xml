@@ -43,9 +43,22 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="7dp"
         android:onClick="onButtonClic"
         android:text="@string/messages"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonListServiceFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/buttonGetMessageList"
+        android:layout_marginTop="7dp"
+        android:onClick="onButtonFilesClic"
+        android:text="@string/service"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

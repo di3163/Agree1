@@ -9,13 +9,12 @@ import android.graphics.pdf.PdfRenderer;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
-
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 public class PDFActivity extends AppCompatActivity {
 
@@ -29,6 +28,7 @@ public class PDFActivity extends AppCompatActivity {
     private float currentZoomLevel = 5;
     private String fileDir;
     String CURRENT_PAGE;
+    private String logFileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class PDFActivity extends AppCompatActivity {
         imgView = findViewById(R.id.imgView);
         btn_zoomin = findViewById(R.id.zoomin);
         btn_zoomout = findViewById(R.id.zoomout);
+        logFileName = this.getFilesDir() + "/log.dat";
         //       btn_zoomin.setOnClickListener((View.OnClickListener) this);
 //        btn_zoomout.setOnClickListener(this);
 
@@ -57,8 +58,9 @@ public class PDFActivity extends AppCompatActivity {
             openPdfRenderer();
             displayPage(currentPage);
         } catch (Exception e) {
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
             //Toast.makeText(this, "PDF-файл защищен паролем.", Toast.LENGTH_SHORT).show();
-            MainActivity.infoString = e.toString();
+            //MainActivity.infoString = e.toString();
             //e.printStackTrace();
         }
     }
@@ -73,7 +75,8 @@ public class PDFActivity extends AppCompatActivity {
         } catch (Exception e) {
             //Toast.makeText(this, "Ошибка", Toast.LENGTH_LONG).show();
             //e.printStackTrace();
-            MainActivity.infoString = e.toString();
+            //MainActivity.infoString = e.toString();
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
         }
     }
 
@@ -117,8 +120,9 @@ public class PDFActivity extends AppCompatActivity {
         try {
             closePdfRenderer();
         } catch (IOException e) {
-            MainActivity.infoString = e.toString();
+            //MainActivity.infoString = e.toString();
             //e.printStackTrace();
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
         }
         super.onStop();
     }
