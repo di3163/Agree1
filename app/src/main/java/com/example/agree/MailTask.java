@@ -199,7 +199,7 @@ class MailTask {
             if (file.exists()) {
                 try {
                     BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                    if((new Date().getTime() - attrs.creationTime().toMillis())/(24*60*60*1000) > 1){
+                    if((new Date().getTime() - attrs.creationTime().toMillis())/(48*60*60*1000) > 1){
                         file.delete();
                     }
                 } catch (IOException e) {

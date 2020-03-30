@@ -38,6 +38,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     static MailTask mailTask;
+    private static boolean showOldMess;
     private RelativeLayout activitiMain;
     private RecyclerView listOfMessages;
     private AgArrayAdapterRW agArrayAdapterRW;
@@ -50,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
     final Handler uiHandler = new Handler();
     private FloatingNavigationView mFloatingNavigationView;
 
+    public static boolean isShowOldMess() {
+        return showOldMess;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         mailTask = new MailTask(this);
         mailTask.loadSettings();
         infoString = "";
+        showOldMess = false;
 
         mFloatingNavigationView = (FloatingNavigationView) findViewById(R.id.floating_navigation_view);
         mFloatingNavigationView.setOnClickListener(new View.OnClickListener() {
@@ -87,9 +93,12 @@ public class MainActivity extends AppCompatActivity {
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                 if (isChecked) {
                                     // The toggle is enabled
+                                    showOldMess = true;
                                 } else {
+                                    showOldMess = false;
                                     // The toggle is disabled
                                 }
+                                displayAllMessages();
                             }
                         });
 
@@ -160,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             agArrayAdapterRW = new AgArrayAdapterRW(mailTask.getMessages());
             listOfMessages.setAdapter(agArrayAdapterRW);
         }
-        mailTask.delOldFiles();
+//        mailTask.delOldFiles();
     }
 
     @Override

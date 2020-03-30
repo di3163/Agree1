@@ -1,6 +1,7 @@
 package com.example.agree;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 //class MessageAgree implements Serializable, Comparable<MessageAgree>{
@@ -9,6 +10,7 @@ class MessageAgree implements Serializable{
     private String subject;
     private String agrNumInMail;
     private String agrStat;
+    private Date dateAgr;
     //private Calendar calendar;
 
     MessageAgree(String id, String subject, String agrStat) {
@@ -16,6 +18,7 @@ class MessageAgree implements Serializable{
         this.subject = subject;
         this.agrStat = agrStat;
         this.agrNumInMail = agrStat;
+        dateAgr = new Date();
         //this.calendar = new GregorianCalendar();
     }
 
@@ -39,7 +42,11 @@ class MessageAgree implements Serializable{
         return agrNumInMail;
     }
 
-//    public Calendar getCalendar() {
+    public Date getDateAgr() {
+        return dateAgr;
+    }
+
+    //    public Calendar getCalendar() {
 //        return calendar;
 //    }
 //

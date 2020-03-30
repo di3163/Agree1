@@ -13,5 +13,6 @@
     <string name="menu_group_communicate">Communicate</string>
     <string name="menu_item_share">Share</string>
     <string name="menu_item_send">Send</string>
+    <string name="menu_switch_history">Show history</string>
 
 </resources>
