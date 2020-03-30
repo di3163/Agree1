@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityMainRw"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rw_mess"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        >
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.andremion.floatingnavigationview.FloatingNavigationView
+        android:id="@+id/floating_navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/custom_theme_light_blue_color"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/toolbar"
+        app:layout_anchorGravity="bottom|end"
+        app:drawMenuBelowFab="true"
+        app:headerLayout="@layout/navigation_view_header"
+        app:menu="@menu/navigation_view" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+    <TextView
+        android:id="@+id/text_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:layout_gravity="top"
+        android:textColor="#D4D4D4" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

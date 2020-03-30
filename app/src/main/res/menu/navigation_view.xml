@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_files"
+            android:icon="@drawable/ic_unknown"
+            android:title="@string/menu_item_files"/>
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_unknown"
+            android:title="@string/menu_item_slideshow"/>
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_unknown"
+            android:title="@string/menu_item_tools"/>
+        <item
+            android:id="@+id/app_bar_switch"
+            android:icon="@drawable/ic_unknown"
+            android:title="Switch"
+            app:actionLayout="@layout/switch_item" />
+    </group>
+
+    <item android:title="@string/menu_group_communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_download_mess"
+                android:icon="@drawable/ic_unknown"
+                android:title="@string/menu_item_download"/>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_unknown"
+                android:title="@string/menu_item_send"/>
+        </menu>
+    </item>
+</menu>

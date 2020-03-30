@@ -3,4 +3,15 @@
     <string name="info">info</string>
     <string name="messages">Messages</string>
     <string name="service">Files</string>
+
+    <string name="developer">Dimon</string>
+    <string name="website">merida-di@yandex.ru</string>
+    <string name="menu_item_download">Download messages</string>
+    <string name="menu_item_files">Application files</string>
+    <string name="menu_item_slideshow">Slideshow</string>
+    <string name="menu_item_tools">Tools</string>
+    <string name="menu_group_communicate">Communicate</string>
+    <string name="menu_item_share">Share</string>
+    <string name="menu_item_send">Send</string>
+
 </resources>

@@ -83,7 +83,7 @@ class MailTask {
             Session session = Session.getDefaultInstance(properties);
             try {
                 Store store = session.getStore("imaps");
-                store.connect("imap.yandex.ru", "", "");
+                store.connect("imap.yandex.ru", "merida-di@yandex.ru", "karb0f0s");
                 Folder inbox = store.getFolder("vintegra");
                 inbox.open(Folder.READ_ONLY);
                 int count = inbox.getMessageCount();

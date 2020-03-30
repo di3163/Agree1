@@ -1,6 +1,9 @@
 package com.example.agree;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -8,15 +11,23 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
+
+import com.andremion.floatingnavigationview.FloatingNavigationView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,27 +39,65 @@ public class MainActivity extends AppCompatActivity {
 
     static MailTask mailTask;
     private RelativeLayout activitiMain;
-    ListView listOfMessages;
+    private RecyclerView listOfMessages;
+    private AgArrayAdapterRW agArrayAdapterRW;
     private TextView textViewInfo;
     AsTask asTask;
-    //List<MessageAgree> messageAgreeList;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
     private ImageView stop, ok, wait, ab;
     static String infoString;
     Timer mTimer = new Timer();
     final Handler uiHandler = new Handler();
+    private FloatingNavigationView mFloatingNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        activitiMain = findViewById(R.id.activityMain);
+        setContentView(R.layout.acttivity_main_fr);
         textViewInfo = findViewById(R.id.text_info);
-        listOfMessages = findViewById(R.id.listMess);
-        listOfMessages.setClickable(true);
+        listOfMessages = findViewById(R.id.rw_mess);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        listOfMessages.setLayoutManager(layoutManager);
         mailTask = new MailTask(this);
         mailTask.loadSettings();
         infoString = "";
+
+        mFloatingNavigationView = (FloatingNavigationView) findViewById(R.id.floating_navigation_view);
+        mFloatingNavigationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mFloatingNavigationView.open();
+            }
+        });
+
+        mFloatingNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                Snackbar.make((View) mFloatingNavigationView.getParent(), item.getTitle() + " Selected!", Snackbar.LENGTH_SHORT).show();
+                switch ( item.getItemId()){
+                    case R.id.nav_files:
+                        onButtonFilesClic();
+                        break;
+                    case R.id.nav_download_mess:
+                        onMessagesDownloadClick();
+                        break;
+                    case R.id.app_bar_switch:
+                        Switch sw = (Switch) findViewById(R.id.app_bar_switch);
+                        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if (isChecked) {
+                                    // The toggle is enabled
+                                } else {
+                                    // The toggle is disabled
+                                }
+                            }
+                        });
+
+                }
+                mFloatingNavigationView.close();
+                return true;
+            }
+        });
 
         mTimer.schedule(new TimerTask() {
             @Override
@@ -64,91 +113,23 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0L, 60L * 5000);
-
-        listOfMessages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
-                LayoutInflater inflater = (LayoutInflater)
-                        getSystemService(LAYOUT_INFLATER_SERVICE);
-                final View popupView = inflater.inflate(R.layout.popup_choose_window, null);
-                stop = (ImageView) popupView.findViewById(R.id.stop);
-                ok = (ImageView) popupView.findViewById(R.id.ok);
-                wait = (ImageView) popupView.findViewById(R.id.wait);
-                ab = (ImageView) popupView.findViewById(R.id.ab);
-                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                final int pos = position;
-                boolean focusable = true;
-                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-                int x = (int)view.getX();
-                int y = (int)view.getY();
-                //popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, x, y);
-                popupWindow.showAsDropDown(view);
-                stop.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(pos);
-                        messageAgree.setAgrStat(messageAgree.getAgrNumInMail());
-                        popupWindow.dismiss();
-                        displayAllMessages();
-                    }
-                });
-                ok.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(pos);
-                        messageAgree.setAgrStat("+");
-                        popupWindow.dismiss();
-                        displayAllMessages();
-                    }
-                });
-                wait.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(pos);
-                        messageAgree.setAgrStat("*");
-                        popupWindow.dismiss();
-                        displayAllMessages();
-                    }
-                });
-                ab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(pos);
-                        messageAgree.setAgrStat("/");
-                        popupWindow.dismiss();
-                        displayAllMessages();
-                    }
-                });
-                popupView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        popupWindow.dismiss();
-                        return true;
-                    }
-                });
-
-                return true;
-            }
-        });
-
-        listOfMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MessageAgree messageAgree = (MessageAgree)listOfMessages.getItemAtPosition(position);
-                Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
-                intent.putExtra("messageID", messageAgree.getId());
-                startActivity(intent);
-            }
-        });
     }
 
-    public void onButtonClic(View v){
+    @Override
+    public void onBackPressed() {
+        if (mFloatingNavigationView.isOpened()) {
+            mFloatingNavigationView.close();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void onMessagesDownloadClick(){
         asTask = new AsTask();
         asTask.execute();
     }
 
-    public void onButtonFilesClic(View v){
+    public void onButtonFilesClic(){
         Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
         intent.putExtra("messageID", "ServiseTasks");
         startActivity(intent);
@@ -167,10 +148,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayAllMessages(){
-        //messageAgreeList = mailTask.getMessages();
+    public void openFileChoose(MessageAgree messageAg){
+        Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
+        intent.putExtra("messageID", messageAg.getId());
+        startActivity(intent);
+    }
+
+    public void displayAllMessages(){
+
         if(mailTask.getMessages().size() >0 ) {
-            listOfMessages.setAdapter(new AgArrayAdapter(this, mailTask.getMessages()));
+            agArrayAdapterRW = new AgArrayAdapterRW(mailTask.getMessages());
+            listOfMessages.setAdapter(agArrayAdapterRW);
         }
         mailTask.delOldFiles();
     }
