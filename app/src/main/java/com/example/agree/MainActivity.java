@@ -31,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -88,25 +89,36 @@ public class MainActivity extends AppCompatActivity {
                         onMessagesDownloadClick();
                         break;
                     case R.id.app_bar_switch:
-                        Switch sw = (Switch) findViewById(R.id.app_bar_switch);
-                        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if (isChecked) {
-                                    // The toggle is enabled
-                                    showOldMess = true;
-                                } else {
-                                    showOldMess = false;
-                                    // The toggle is disabled
-                                }
-                                displayAllMessages();
-                            }
-                        });
+                        if (showOldMess) {
+                            showOldMess = false;
+                            item.setTitle("Show history");
+                        } else {
+                            showOldMess = true;
+                            item.setTitle("Hide history");
+                        }
+                        displayAllMessages();
 
                 }
                 mFloatingNavigationView.close();
                 return true;
             }
         });
+
+//        Switch sw = (Switch) findViewById(R.id.app_bar_switch);
+//        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    // The toggle is enabled
+//                    showOldMess = true;
+//                } else {
+//                    showOldMess = false;
+//                    // The toggle is disabled
+//                }
+//                displayAllMessages();
+//                if (mFloatingNavigationView.isOpened())
+//                    mFloatingNavigationView.close();
+//            }
+//        });
 
         mTimer.schedule(new TimerTask() {
             @Override
@@ -164,10 +176,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayAllMessages(){
+        List<MessageAgree> fullMessList= mailTask.getMessages();
 
-        if(mailTask.getMessages().size() >0 ) {
-            agArrayAdapterRW = new AgArrayAdapterRW(mailTask.getMessages());
-            listOfMessages.setAdapter(agArrayAdapterRW);
+        if(fullMessList.size() >0 ) {
+            if (isShowOldMess()) {
+                agArrayAdapterRW = new AgArrayAdapterRW(fullMessList);
+                listOfMessages.setAdapter(agArrayAdapterRW);
+            }else {
+                List<MessageAgree> todayMessages = new ArrayList<>();
+                for (MessageAgree currentMess : fullMessList){
+                    if(removeTime(currentMess.getDateAgr()).equals(removeTime(new Date()))){
+                        todayMessages.add(currentMess);
+                    }
+                }
+                agArrayAdapterRW = new AgArrayAdapterRW(todayMessages);
+                listOfMessages.setAdapter(agArrayAdapterRW);
+            }
         }
 //        mailTask.delOldFiles();
     }
@@ -202,5 +226,15 @@ public class MainActivity extends AppCompatActivity {
         textViewInfo.setText(infoString);
         displayAllMessages();
         super.onResume();
+    }
+
+    public static Date removeTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
     }
 }

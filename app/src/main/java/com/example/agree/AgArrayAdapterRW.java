@@ -62,19 +62,8 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
         }
 
         void bind(int listIndex){
-            if (MainActivity.isShowOldMess()) {
-                fillingFields(listIndex, true);
-            }else {
-                if (!values.get(listIndex).getDateAgr().after(new Date())){
-                    fillingFields(listIndex,false);
-                }
-            }
-
-        }
-
-        void fillingFields(int listIndex, boolean oldDate){
             StringBuilder strMess = new StringBuilder();
-            if (oldDate) {
+            if (MainActivity.isShowOldMess() && !MainActivity.removeTime(values.get(listIndex).getDateAgr()).equals(MainActivity.removeTime(new Date()))) {
                 SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy");
                 strMess.append(formatD.format(values.get(listIndex).getDateAgr()));
                 strMess.append("-");
@@ -91,7 +80,31 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
             } else {
                 iconRW.setImageResource(R.drawable.ic_stop);
             }
+
         }
+
+//        void fillingFields(int listIndex, boolean oldDate){
+//            StringBuilder strMess = new StringBuilder();
+//            if (oldDate) {
+//                SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy");
+//                strMess.append(formatD.format(values.get(listIndex).getDateAgr()));
+//                strMess.append("-");
+//            }
+//
+//                strMess.append(values.get(listIndex).getSubject());
+//                textViewRW.setText(strMess.toString());
+//                iconRW.setImageResource(R.drawable.ic_stop);
+//                if (values.get(listIndex).getAgrStat().equals("+")) {
+//                    iconRW.setImageResource(R.drawable.ic_ok);
+//                } else if (values.get(listIndex).getAgrStat().equals("*")) {
+//                    iconRW.setImageResource(R.drawable.ic_wait);
+//                } else if (values.get(listIndex).getAgrStat().equals("/")) {
+//                    iconRW.setImageResource(R.drawable.ic_ab);
+//                } else {
+//                    iconRW.setImageResource(R.drawable.ic_stop);
+//                }
+//
+//        }
 
         @Override
         public void onClick(View v){
