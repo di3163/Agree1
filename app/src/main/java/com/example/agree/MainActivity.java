@@ -65,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listOfMessages.setLayoutManager(layoutManager);
         mailTask = new MailTask(this);
-        mailTask.loadSettings();
+        ServiceTasks.loadSettings(this);
+        mailTask.loadMailsetting();
+        //mailTask.loadSettings();
         infoString = "";
         showOldMess = false;
 
@@ -88,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_download_mess:
                         onMessagesDownloadClick();
                         break;
+                    case R.id.nav_mail_setting_list:
+                        onMailSettingClick();
+                        break;
                     case R.id.app_bar_switch:
                         if (showOldMess) {
                             showOldMess = false;
@@ -103,22 +108,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-//        Switch sw = (Switch) findViewById(R.id.app_bar_switch);
-//        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    // The toggle is enabled
-//                    showOldMess = true;
-//                } else {
-//                    showOldMess = false;
-//                    // The toggle is disabled
-//                }
-//                displayAllMessages();
-//                if (mFloatingNavigationView.isOpened())
-//                    mFloatingNavigationView.close();
-//            }
-//        });
 
         mTimer.schedule(new TimerTask() {
             @Override
@@ -153,6 +142,12 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonFilesClic(){
         Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
         intent.putExtra("messageID", "ServiseTasks");
+        startActivity(intent);
+    }
+
+    public void onMailSettingClick(){
+        Intent intent = new Intent(MainActivity.this, MailSettinsActivity.class);
+        intent.putExtra("mailSetting", "MaillSetting");
         startActivity(intent);
     }
 
@@ -208,7 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        mailTask.saveSettings();
+        ServiceTasks.saveSettings(this, mailTask.getMessages());
+        //mailTask.saveSettings();
         super.onStop();
     }
 

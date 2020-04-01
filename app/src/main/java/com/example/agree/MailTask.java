@@ -37,14 +37,18 @@ class MailTask {
     private final Activity context;
     private String iD;
     private String logFileName;
+    private String serverName;
+    private String portNumber;
+    private String account;
+    private String pass;
 
     MailTask(Activity context) {
         this.context = context;
         messages = new ArrayList<>();
         properties = new Properties();
-        properties.put("mail.imap.host", "imap.yandex.ru");
-        properties.put("mail.imap.port", "993");
-        properties.put("mail.imap.starttls.enable", "true");
+//        properties.put("mail.imap.host", getServerName());
+//        properties.put("mail.imap.port", getPortNumber());
+//        properties.put("mail.imap.starttls.enable", "true");
         iD = null;
         logFileName = context.getFilesDir() + "/log.dat";
     }
@@ -53,8 +57,46 @@ class MailTask {
         return messages;
     }
 
+    public String getServerName() {
+        return serverName;
+    }
+
+    public String getPortNumber() {
+        return portNumber;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public void setPortNumber(String portNumber) {
+        this.portNumber = portNumber;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
     public void setMessages(List<MessageAgree> messages) {
         this.messages = messages;
+    }
+
+    void loadMailsetting(){
+        properties.put("mail.imap.host", getServerName());
+        properties.put("mail.imap.port", getPortNumber());
+        properties.put("mail.imap.starttls.enable", "true");
     }
 
     private void purgeMessagesList(){
@@ -83,7 +125,7 @@ class MailTask {
             Session session = Session.getDefaultInstance(properties);
             try {
                 Store store = session.getStore("imaps");
-                store.connect("imap.yandex.ru", "", "");
+                store.connect(getServerName(),getAccount(), getPass());
                 Folder inbox = store.getFolder("vintegra");
                 inbox.open(Folder.READ_ONLY);
                 int count = inbox.getMessageCount();
@@ -181,12 +223,8 @@ class MailTask {
             }
         } catch (IOException e) {
             ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-            //MainActivity.infoString = e.toString();
-            //e.printStackTrace();
         } catch (MessagingException e) {
             ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-            //MainActivity.infoString = e.toString();
-            //e.printStackTrace();
         }
         return strParse.toString();
     }
@@ -204,56 +242,54 @@ class MailTask {
                     }
                 } catch (IOException e) {
                     ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-                    //MainActivity.infoString = e.toString();
-                    //e.printStackTrace();
                 }
             }
         }
     }
 
 
-    void saveSettings(){
-        try {
-            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds2.dat"));
-            objectOS.writeObject(new ArrayList<MessageAgree>(getMessages()));
-            objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
-            objectOS.close();
-        }catch (Exception e){
-            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-            //MainActivity.infoString = e.toString();
-            //e.printStackTrace();
-        }
-    }
+//    void saveSettings(){
+//        try {
+//            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds2.dat"));
+//            objectOS.writeObject(new ArrayList<MessageAgree>(getMessages()));
+//            objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
+//            objectOS.close();
+//        }catch (Exception e){
+//            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+//            //MainActivity.infoString = e.toString();
+//            //e.printStackTrace();
+//        }
+//    }
 
-    void loadSettings(){
-        File fileSer = new File(context.getFilesDir() + "/ds2.dat");
-        if (fileSer.exists()){
-            try {
-                ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
-                List<MessageAgree> list = (List<MessageAgree>) objectIS.readObject();
-//                synchronized (messages) {
-//                    for (MessageAgree currentM : list) {
-//                        if (!messages.contains(currentM)) {
-//                            messages.add(currentM);
-//                        }
-//                    }
-//                }
-                setMessages(list);
-                List<FilesFromMail> listF = (List<FilesFromMail>) objectIS.readObject();
-//                    for(FilesFromMail currentF : listF){
-//                        if (!MainActivity.listFilesFromMail.contains(currentF)){
-//                            if (new File(context.getFilesDir() + currentF.getFileName()).exists())
-//                            MainActivity.listFilesFromMail.add(currentF);
-//                        }
-//                    }
-                MainActivity.listFilesFromMail = listF;
-                objectIS.close();
-            } catch (Exception e){
-                ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-                //MainActivity.infoString = e.toString();
-                //e.printStackTrace();
-            }
-        }
-    }
+//    void loadSettings(){
+//        File fileSer = new File(context.getFilesDir() + "/ds2.dat");
+//        if (fileSer.exists()){
+//            try {
+//                ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
+//                List<MessageAgree> list = (List<MessageAgree>) objectIS.readObject();
+////                synchronized (messages) {
+////                    for (MessageAgree currentM : list) {
+////                        if (!messages.contains(currentM)) {
+////                            messages.add(currentM);
+////                        }
+////                    }
+////                }
+//                setMessages(list);
+//                List<FilesFromMail> listF = (List<FilesFromMail>) objectIS.readObject();
+////                    for(FilesFromMail currentF : listF){
+////                        if (!MainActivity.listFilesFromMail.contains(currentF)){
+////                            if (new File(context.getFilesDir() + currentF.getFileName()).exists())
+////                            MainActivity.listFilesFromMail.add(currentF);
+////                        }
+////                    }
+//                MainActivity.listFilesFromMail = listF;
+//                objectIS.close();
+//            } catch (Exception e){
+//                ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+//                //MainActivity.infoString = e.toString();
+//                //e.printStackTrace();
+//            }
+//        }
+//    }
 
 }

@@ -1,7 +1,6 @@
 package com.example.agree;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +65,7 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
             if (MainActivity.isShowOldMess() && !MainActivity.removeTime(values.get(listIndex).getDateAgr()).equals(MainActivity.removeTime(new Date()))) {
                 SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy");
                 strMess.append(formatD.format(values.get(listIndex).getDateAgr()));
-                strMess.append("-");
+                strMess.append(" - ");
             }
             strMess.append(values.get(listIndex).getSubject());
             textViewRW.setText(strMess.toString());
@@ -82,29 +81,6 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
             }
 
         }
-
-//        void fillingFields(int listIndex, boolean oldDate){
-//            StringBuilder strMess = new StringBuilder();
-//            if (oldDate) {
-//                SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy");
-//                strMess.append(formatD.format(values.get(listIndex).getDateAgr()));
-//                strMess.append("-");
-//            }
-//
-//                strMess.append(values.get(listIndex).getSubject());
-//                textViewRW.setText(strMess.toString());
-//                iconRW.setImageResource(R.drawable.ic_stop);
-//                if (values.get(listIndex).getAgrStat().equals("+")) {
-//                    iconRW.setImageResource(R.drawable.ic_ok);
-//                } else if (values.get(listIndex).getAgrStat().equals("*")) {
-//                    iconRW.setImageResource(R.drawable.ic_wait);
-//                } else if (values.get(listIndex).getAgrStat().equals("/")) {
-//                    iconRW.setImageResource(R.drawable.ic_ab);
-//                } else {
-//                    iconRW.setImageResource(R.drawable.ic_stop);
-//                }
-//
-//        }
 
         @Override
         public void onClick(View v){
@@ -147,30 +123,18 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
                 @Override
                 public void onClick(View v) {
                     setStatIcon(popupWindow, pos, "+");
-//                    MessageAgree messageAgree = values.get(pos);
-//                    messageAgree.setAgrStat("+");
-//                    popupWindow.dismiss();
-//                    ((MainActivity)itemView.getContext()).displayAllMessages();
                 }
             });
             wait.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     setStatIcon(popupWindow, pos, "*");
-//                    MessageAgree messageAgree = values.get(pos);
-//                    messageAgree.setAgrStat("*");
-//                    popupWindow.dismiss();
-//                    ((MainActivity)itemView.getContext()).displayAllMessages();
                 }
             });
             ab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     setStatIcon(popupWindow, pos, "/");
-//                    MessageAgree messageAgree = values.get(pos);
-//                    messageAgree.setAgrStat("/");
-//                    popupWindow.dismiss();
-//                    ((MainActivity)itemView.getContext()).displayAllMessages();
                 }
             });
         }

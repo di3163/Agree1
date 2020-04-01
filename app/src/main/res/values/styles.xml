@@ -4,6 +4,7 @@
     <color name="custom_theme_blue_color">#4F4FD9</color>
     <color name="custom_theme_light_blue_color">#886ED7</color>
     <color name="custom_theme_dark_blue_color">#090974</color>
+    <color name="custom_theme_white">#ffffff</color>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/custom_theme_blue_color</item>

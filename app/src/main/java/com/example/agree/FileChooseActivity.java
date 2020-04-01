@@ -35,9 +35,6 @@ public class FileChooseActivity extends AppCompatActivity {
             }
         }
 
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.row_file, R.id.textFile, currentFilesList);
-        //listOfFiles.setAdapter(adapter);
-
         listOfFiles.setAdapter(new FileArrayAdapter(this, currentFilesList));
 
 
@@ -56,7 +53,6 @@ public class FileChooseActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private List<String> getFilesFromDir(String pathname){
@@ -68,7 +64,4 @@ public class FileChooseActivity extends AppCompatActivity {
         }
         return listFiles;
     }
-
-
-
 }

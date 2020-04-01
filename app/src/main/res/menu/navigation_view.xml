@@ -11,9 +11,9 @@
             android:icon="@drawable/ic_unknown"
             android:title="@string/menu_item_slideshow"/>
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_mail_setting_list"
             android:icon="@drawable/ic_unknown"
-            android:title="@string/menu_item_tools"/>
+            android:title="@string/menu_item_mailset"/>
         <item
             android:id="@+id/app_bar_switch"
             android:icon="@drawable/ic_unknown"
