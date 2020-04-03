@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import java.io.File;
@@ -21,7 +22,8 @@ public class PDFActivity extends AppCompatActivity {
     private String path;
     private ImageView imgView;
     private int currentPage = 0;
-    private ImageButton btn_zoomin, btn_zoomout;
+    private ImageButton btn_zoomin, btn_zoomout, btn_Previous, btn_Next;
+    //private Button btnPrevious, btnNext;
     private PdfRenderer pdfRenderer;
     private PdfRenderer.Page curPage;
     private ParcelFileDescriptor descriptor;
@@ -41,12 +43,29 @@ public class PDFActivity extends AppCompatActivity {
         fileDir =  getFilesDir().toString();
         path = fileDir + getIntent().getStringExtra("fileName");
         imgView = findViewById(R.id.imgView);
+        btn_Previous = findViewById(R.id.previous);
+        btn_Next = findViewById(R.id.next);
         btn_zoomin = findViewById(R.id.zoomin);
         btn_zoomout = findViewById(R.id.zoomout);
         logFileName = this.getFilesDir() + "/log.dat";
         //       btn_zoomin.setOnClickListener((View.OnClickListener) this);
 //        btn_zoomout.setOnClickListener(this);
-
+//        btnPrevious.setOnClickListener(new View.OnClickListener(
+//
+//        ) {
+//            @Override
+//            public void onClick(View v) {
+//                int index = curPage.getIndex() - 1;
+//                displayPage(index);
+//            }
+//        });
+//        btnNext.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int index = curPage.getIndex() + 1;
+//                displayPage(index);
+//            }
+//        });
 
 
     }
@@ -95,8 +114,22 @@ public class PDFActivity extends AppCompatActivity {
         matrix.setScale(dpiAdjustedZoomLevel, dpiAdjustedZoomLevel);
         curPage.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
         imgView.setImageBitmap(bitmap);
+        int pageCount = pdfRenderer.getPageCount();
+        btn_Previous.setEnabled(0 != index);
+        btn_Next.setEnabled(index + 1 < pageCount);
         btn_zoomout.setEnabled(currentZoomLevel != 2);
         btn_zoomin.setEnabled(currentZoomLevel != 12);
+    }
+
+
+    public void rewind(View v){
+        int index = curPage.getIndex() - 1;
+        displayPage(index);
+    }
+
+    public void forward(View v){
+        int index = curPage.getIndex() + 1;
+        displayPage(index);
     }
 
     public void zoomIn(View v){

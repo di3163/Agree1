@@ -1,33 +1,21 @@
 package com.example.agree;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
-import android.widget.TextView;
-
 import com.andremion.floatingnavigationview.FloatingNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,11 +27,11 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     static MailTask mailTask;
-    private static boolean showOldMess;
-    private RelativeLayout activitiMain;
+    static boolean showOldMess;
+    private CoordinatorLayout activitiMain;
     private RecyclerView listOfMessages;
     private AgArrayAdapterRW agArrayAdapterRW;
-    private TextView textViewInfo;
+    //private TextView textViewInfo;
     AsTask asTask;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
     private ImageView stop, ok, wait, ab;
@@ -60,14 +48,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acttivity_main_fr);
-        textViewInfo = findViewById(R.id.text_info);
+        activitiMain = findViewById(R.id.activityMainRw);
+        //textViewInfo = findViewById(R.id.text_info);
         listOfMessages = findViewById(R.id.rw_mess);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listOfMessages.setLayoutManager(layoutManager);
         mailTask = new MailTask(this);
         ServiceTasks.loadSettings(this);
         mailTask.loadMailsetting();
-        //mailTask.loadSettings();
         infoString = "";
         showOldMess = false;
 
@@ -78,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 mFloatingNavigationView.open();
             }
         });
+
+
 
         mFloatingNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -102,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                             item.setTitle("Hide history");
                         }
                         displayAllMessages();
-
                 }
                 mFloatingNavigationView.close();
                 return true;
@@ -117,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 uiHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        textViewInfo.setText(infoString);
+                        //textViewInfo.setText(infoString);
+                        snackPopup(infoString);
                         displayAllMessages();
                     }
                 });
@@ -159,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
         }
         protected void onPostExecute(String result){
             infoString = "Список сообщений обновлен " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
-            textViewInfo.setText(infoString);
+            //textViewInfo.setText(infoString);
+            snackPopup(infoString);
             displayAllMessages();
         }
     }
@@ -180,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 List<MessageAgree> todayMessages = new ArrayList<>();
                 for (MessageAgree currentMess : fullMessList){
-                    if(removeTime(currentMess.getDateAgr()).equals(removeTime(new Date()))){
+                    if(ServiceTasks.removeTime(currentMess.getDateAgr()).equals(ServiceTasks.removeTime(new Date()))){
                         todayMessages.add(currentMess);
                     }
                 }
@@ -204,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         ServiceTasks.saveSettings(this, mailTask.getMessages());
-        //mailTask.saveSettings();
         super.onStop();
     }
 
@@ -219,18 +209,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onResume() {
-        textViewInfo.setText(infoString);
+        //textViewInfo.setText(infoString);
+        snackPopup(infoString);
         displayAllMessages();
         super.onResume();
     }
 
-    public static Date removeTime(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
+    void snackPopup(String textString) {
+        Snackbar snackbar = Snackbar.make((View) activitiMain, textString, Snackbar.LENGTH_LONG);
+        View sbView = snackbar.getView();
+        sbView.setBackgroundColor(Color.parseColor("#4F4FD9"));
+        snackbar.show();
     }
 }

@@ -37,18 +37,42 @@
         android:orientation="horizontal"
         >
 
-    <ImageButton
-        android:id="@+id/zoomout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="0dp"
-        android:layout_weight="0.5"
-        android:background="@null"
-        android:onClick="zoomOut"
-        android:padding="8dp"
-        android:src="@drawable/ic_zoom_out"
-        />
+        <ImageButton
+            android:id="@+id/previous"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="0dp"
+            android:layout_weight="0.5"
+            android:background="@null"
+            android:onClick="rewind"
+            android:padding="8dp"
+            android:src="@drawable/ic_action_rewind"
+            />
+
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="0dp"
+            android:layout_weight="0.5"
+            android:background="@null"
+            android:onClick="forward"
+            android:padding="8dp"
+            android:src="@drawable/ic_action_forward"
+            />
+        <ImageButton
+            android:id="@+id/zoomout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="0dp"
+            android:layout_weight="0.5"
+            android:background="@null"
+            android:onClick="zoomOut"
+            android:padding="8dp"
+            android:src="@drawable/ic_zoom_out" />
 
         <ImageButton
             android:id="@+id/zoomin"

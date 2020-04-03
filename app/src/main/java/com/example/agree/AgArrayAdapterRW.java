@@ -62,7 +62,7 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
 
         void bind(int listIndex){
             StringBuilder strMess = new StringBuilder();
-            if (MainActivity.isShowOldMess() && !MainActivity.removeTime(values.get(listIndex).getDateAgr()).equals(MainActivity.removeTime(new Date()))) {
+            if (MainActivity.isShowOldMess() && !ServiceTasks.removeTime(values.get(listIndex).getDateAgr()).equals(ServiceTasks.removeTime(new Date()))) {
                 SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy");
                 strMess.append(formatD.format(values.get(listIndex).getDateAgr()));
                 strMess.append(" - ");
@@ -88,7 +88,11 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
             if (pos != RecyclerView.NO_POSITION){
                 switch (v.getId()) {
                     case R.id.iconRw:
-                        iconClick(pos, v);
+                        if(ServiceTasks.removeTime(values.get(pos).getDateAgr()).equals(ServiceTasks.removeTime(new Date()))) {
+                            iconClick(pos, v);
+                        }else {
+                            ((MainActivity)itemView.getContext()).snackPopup("Это согласование неактуально");
+                        }
                         break;
                     case R.id.textViewRw:
                         textClick(pos, v);

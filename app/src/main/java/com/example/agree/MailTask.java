@@ -6,11 +6,7 @@ import android.app.Activity;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -46,9 +42,6 @@ class MailTask {
         this.context = context;
         messages = new ArrayList<>();
         properties = new Properties();
-//        properties.put("mail.imap.host", getServerName());
-//        properties.put("mail.imap.port", getPortNumber());
-//        properties.put("mail.imap.starttls.enable", "true");
         iD = null;
         logFileName = context.getFilesDir() + "/log.dat";
     }
@@ -57,39 +50,39 @@ class MailTask {
         return messages;
     }
 
-    public String getServerName() {
+    String getServerName() {
         return serverName;
     }
 
-    public String getPortNumber() {
+    String getPortNumber() {
         return portNumber;
     }
 
-    public String getAccount() {
+    String getAccount() {
         return account;
     }
 
-    public String getPass() {
+    String getPass() {
         return pass;
     }
 
-    public void setServerName(String serverName) {
+    void setServerName(String serverName) {
         this.serverName = serverName;
     }
 
-    public void setPortNumber(String portNumber) {
+    void setPortNumber(String portNumber) {
         this.portNumber = portNumber;
     }
 
-    public void setAccount(String account) {
+    void setAccount(String account) {
         this.account = account;
     }
 
-    public void setPass(String pass) {
+    void setPass(String pass) {
         this.pass = pass;
     }
 
-    public void setMessages(List<MessageAgree> messages) {
+    void setMessages(List<MessageAgree> messages) {
         this.messages = messages;
     }
 
@@ -147,8 +140,6 @@ class MailTask {
                             }
                         } catch (IOException e) {
                             ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-                            //MainActivity.infoString = e.toString();
-                            //e.printStackTrace();
                         }
 
                         for (String contractor : listOfContractors) {
@@ -157,19 +148,15 @@ class MailTask {
                                 messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0]));
                             } else {
                                 MainActivity.infoString = "incorrect mail format " + iD;
-                                //error message incorrect mail format
                             }
                         }
                     }
                 }
                 inbox.close(false);
                 store.close();
-                //Collections.sort(messages);
 
             } catch (MessagingException e) {
                 ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-                //MainActivity.infoString = e.toString();
-                //e.printStackTrace();
             }
         }
     }
@@ -214,6 +201,9 @@ class MailTask {
                     MimeBodyPart mPart = (MimeBodyPart) multipart.getBodyPart(i);
                     String decodedFilename = MimeUtility.decodeText(mPart.getFileName());
                     //File fileAttach = new File(context.getFilesDir() + decodedFilename);
+                    if(decodedFilename.contains("КК")){
+                        decodedFilename = iD+decodedFilename;
+                    }
                     if (!new File(context.getFilesDir() + decodedFilename).exists()) {
                         mPart.saveFile(new File(context.getFilesDir() + decodedFilename));
 
