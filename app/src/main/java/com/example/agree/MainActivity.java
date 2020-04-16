@@ -1,6 +1,5 @@
 package com.example.agree;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,7 +18,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private CoordinatorLayout activitiMain;
     private RecyclerView listOfMessages;
     private AgArrayAdapterRW agArrayAdapterRW;
-    //private TextView textViewInfo;
     AsTask asTask;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
     private ImageView stop, ok, wait, ab;
@@ -49,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acttivity_main_fr);
         activitiMain = findViewById(R.id.activityMainRw);
-        //textViewInfo = findViewById(R.id.text_info);
         listOfMessages = findViewById(R.id.rw_mess);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listOfMessages.setLayoutManager(layoutManager);
@@ -80,8 +76,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_download_mess:
                         onMessagesDownloadClick();
                         break;
+                    case R.id.nav_send:
+                        onSendClick();
+                        break;
                     case R.id.nav_mail_setting_list:
                         onMailSettingClick();
+                        break;
+                    case R.id.nav_del_files:
+                        mailTask.delFiles(true);
                         break;
                     case R.id.app_bar_switch:
                         if (showOldMess) {
@@ -106,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
                 uiHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        //textViewInfo.setText(infoString);
                         snackPopup(infoString);
                         displayAllMessages();
                     }
@@ -129,6 +130,12 @@ public class MainActivity extends AppCompatActivity {
         asTask.execute();
     }
 
+    public void onSendClick(){
+        SendAsTask sendMess = new SendAsTask();
+        sendMess.execute();
+
+    }
+
     public void onButtonFilesClic(){
         Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
         intent.putExtra("messageID", "ServiseTasks");
@@ -149,7 +156,21 @@ public class MainActivity extends AppCompatActivity {
         }
         protected void onPostExecute(String result){
             infoString = "Список сообщений обновлен " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
-            //textViewInfo.setText(infoString);
+            snackPopup(infoString);
+            displayAllMessages();
+        }
+    }
+
+    class SendAsTask extends AsyncTask<Void, Void, String>{
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            mailTask.makeAg();
+            return null;
+        }
+
+        protected void onPostExecute(String result){
+            infoString = "Согласования отправлены " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
             snackPopup(infoString);
             displayAllMessages();
         }
@@ -171,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 List<MessageAgree> todayMessages = new ArrayList<>();
                 for (MessageAgree currentMess : fullMessList){
-                    if(ServiceTasks.removeTime(currentMess.getDateAgr()).equals(ServiceTasks.removeTime(new Date()))){
+                    //if(ServiceTasks.removeTime(currentMess.getDateAgr()).equals(ServiceTasks.removeTime(new Date()))){
+                    if(!currentMess.isAgreed()){
                         todayMessages.add(currentMess);
                     }
                 }
@@ -179,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 listOfMessages.setAdapter(agArrayAdapterRW);
             }
         }
-//        mailTask.delOldFiles();
+        mailTask.delFiles(false);
     }
 
     @Override
@@ -209,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onResume() {
-        //textViewInfo.setText(infoString);
         snackPopup(infoString);
         displayAllMessages();
         super.onResume();

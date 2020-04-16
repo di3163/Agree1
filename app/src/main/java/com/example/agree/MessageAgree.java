@@ -9,6 +9,7 @@ class MessageAgree implements Serializable{
     private String agrNumInMail;
     private String agrStat;
     private Date dateAgr;
+    private boolean agreed;
 
     MessageAgree(String id, String subject, String agrStat) {
         this.id = id;
@@ -16,6 +17,7 @@ class MessageAgree implements Serializable{
         this.agrStat = agrStat;
         this.agrNumInMail = agrStat;
         dateAgr = new Date();
+        agreed = false;
     }
 
     String getId() {
@@ -33,6 +35,10 @@ class MessageAgree implements Serializable{
     void setAgrStat(String agrStat) {
         this.agrStat = agrStat;
     }
+
+    public void setAgreed(boolean agreed) { this.agreed = agreed; }
+
+    public boolean isAgreed() { return agreed; }
 
     String getAgrNumInMail() {
         return agrNumInMail;

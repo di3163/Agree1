@@ -32,7 +32,7 @@ public class ServiceTasks {
     public static void saveSettings(Context context, List<MessageAgree> messageAgreeList){
         String logFileName = context.getFilesDir() + "/log.dat";
         try {
-            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds2.dat"));
+            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/adat.dat"));
             objectOS.writeObject(new ArrayList<MessageAgree>(messageAgreeList));
             objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
             objectOS.writeObject(MainActivity.mailTask.getServerName());
@@ -47,7 +47,7 @@ public class ServiceTasks {
 
     public static void loadSettings(Context context){
         String logFileName = context.getFilesDir() + "/log.dat";
-        File fileSer = new File(context.getFilesDir() + "/ds2.dat");
+        File fileSer = new File(context.getFilesDir() + "/adat.dat");
         if (fileSer.exists()){
             try {
                 ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
@@ -70,6 +70,11 @@ public class ServiceTasks {
             } catch (Exception e){
                 ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
             }
+        }else {
+            MainActivity.mailTask.setServerName("");
+            MainActivity.mailTask.setPortNumber("");
+            MainActivity.mailTask.setAccount("");
+            MainActivity.mailTask.setPass("");
         }
     }
 

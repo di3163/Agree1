@@ -15,21 +15,28 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 class MailTask {
     private List<MessageAgree> messages;
     private Properties properties;
+    private Properties propertiesSMTP;
     private final Activity context;
     private String iD;
     private String logFileName;
@@ -42,6 +49,7 @@ class MailTask {
         this.context = context;
         messages = new ArrayList<>();
         properties = new Properties();
+        propertiesSMTP = new Properties();
         iD = null;
         logFileName = context.getFilesDir() + "/log.dat";
     }
@@ -90,7 +98,141 @@ class MailTask {
         properties.put("mail.imap.host", getServerName());
         properties.put("mail.imap.port", getPortNumber());
         properties.put("mail.imap.starttls.enable", "true");
+
+//        properties.put("mail.transport.protocol", "smtp");
+        propertiesSMTP.put("mail.smtp.host", "smtp.yandex.ru");
+        propertiesSMTP.put("mail.smtp.auth", "true");
+        propertiesSMTP.put("mail.smtp.socketFactory.port", "465");
+        propertiesSMTP.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
     }
+
+    boolean sendMess(String s, String currentId) {
+        boolean succesfully = false;
+        Session sessionSMTP = Session.getInstance(propertiesSMTP,
+                new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("", "");
+                    }
+                });
+        Message messageSMTP = new MimeMessage(sessionSMTP);
+        try {
+            messageSMTP.setFrom(new InternetAddress("merida-di@yandex.ru"));
+            messageSMTP.setRecipient(Message.RecipientType.TO, new InternetAddress("merida-di@yandex.ru"));
+            messageSMTP.setSubject(currentId);
+            messageSMTP.setText(s);
+            Transport.send(messageSMTP);
+            succesfully = true;
+        } catch (MessagingException e) {
+            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+        }
+        return succesfully;
+    }
+
+
+    public void makeAg(){
+        List<MessageAgree> listActual = selectActualAgree();
+        List<String> listShipped = new ArrayList<>();
+        String currentId;
+        for (MessageAgree current : listActual) {
+               currentId = current.getId();
+            if (!listShipped.contains(currentId)){
+                String messageString = addAgToMeesage(listActual, currentId);
+                if (messageString.equals(""))messageString="+";
+                if (sendMess(messageString, currentId)) {
+                    listShipped.add(current.getId());
+                }
+
+            }
+        }
+
+        for (MessageAgree current : listActual) {
+            if (listShipped.contains(current.getId())) current.setAgreed(true);
+        }
+    }
+
+    public String addAgToMeesage (List<MessageAgree> listActual, String currentId){
+        StringBuilder messageBuilder = new StringBuilder();
+        for (MessageAgree current : listActual) {
+            if (current.getId().equals(currentId)) {
+                messageBuilder.append(addAgrStatInBody(current));
+            }
+        }
+        return messageBuilder.toString();
+    }
+
+    List<MessageAgree> selectActualAgree(){
+        List<MessageAgree> listActual = new ArrayList<>();
+        for (MessageAgree currentMess : messages){
+            if (!ServiceTasks.removeTime(currentMess.getDateAgr()).equals(ServiceTasks.removeTime(new Date())) || currentMess.isAgreed()) continue;
+            listActual.add(currentMess);
+        }
+        return listActual;
+    }
+
+    String addAgrStatInBody(MessageAgree currM){
+        StringBuilder sb = new StringBuilder();
+        if (currM.getAgrStat().equals("+")){
+            return "";
+        }else if (currM.getAgrStat().equals("*")){
+            sb.append(currM.getAgrNumInMail());
+            sb.append("*");
+            sb.append("\n");
+        }else if (currM.getAgrStat().equals("/")){
+            sb.append(currM.getAgrNumInMail());
+            sb.append("/");
+            sb.append("\n");
+        }else {
+            sb.append(currM.getAgrNumInMail());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+
+    void sendAgree(){
+        List<MessageAgree> listActual = selectActualAgree();
+        List<String> listPostedId = new ArrayList<>();
+        List<String> listShipped = new ArrayList<>();
+        for (MessageAgree current : listActual) {
+            String currentId = null;
+            StringBuilder stringBody = new StringBuilder();
+            for (MessageAgree currentMess : listActual) {
+                if (currentId == null) {
+                    if (!listPostedId.contains(currentMess.getId())) {
+                        listPostedId.add(currentMess.getId());
+                        currentId = currentMess.getId();
+                        stringBody.append(addAgrStatInBody(currentMess));
+                    }
+                } else if (currentId.equals(currentMess.getId())) {
+                    stringBody.append(addAgrStatInBody(currentMess));
+                }
+            }
+            if (!current.isAgreed()) {
+                if (!listShipped.contains(current.getId())) {
+                    String stringB = null;
+                    if (stringBody.toString().equals("")){
+                        stringB = "+";
+
+                    }else {
+                        stringB = stringBody.toString();
+                    }
+                    if (!sendMess(stringB, current.getId())) {
+                        listPostedId.remove(current.getId());
+                        listShipped.remove(current.getId());
+                    } else {
+                        listShipped.add(current.getId());
+                    }
+                }
+            }
+        }
+        for (MessageAgree current : listActual) {
+            if (listShipped.contains(current.getId())) current.setAgreed(true);
+        }
+
+    }
+
 
     private void purgeMessagesList(){
         if (messages.size() > 0)
@@ -107,7 +249,6 @@ class MailTask {
 
     void refreshListMessages(){
         List<String> listOfContractors = new ArrayList<>();
-        //purgeMessagesList();
 
         List<String> listId = new ArrayList<>();
         synchronized (messages) {
@@ -125,7 +266,8 @@ class MailTask {
                 Message[] messagesArr = inbox.getMessages(1, count);
                 for (Message message : messagesArr) {
                     String subject = message.getSubject();
-                    if (subject.contains("На согласование") && subject.contains("ID")) {
+                    if (subject.contains("На согласование") && subject.contains("ID") &&
+                            ServiceTasks.removeTime(message.getReceivedDate()).equals(ServiceTasks.removeTime(new Date()))) {
                         iD = subject.substring(subject.lastIndexOf("ID:"));
                         if (listId.size() != 0) {
                             if (listId.contains(iD))
@@ -219,67 +361,30 @@ class MailTask {
         return strParse.toString();
     }
 
-    void delOldFiles(){
-        List<FilesFromMail> listF = MainActivity.listFilesFromMail;
-        for (FilesFromMail currentF : listF){
-            File file = new File(context.getFilesDir() + currentF.getFileName());
+    void delFiles(boolean all) {
+        List<FilesFromMail> listFiles = MainActivity.listFilesFromMail;
+        FilesFromMail[] filesArray = new FilesFromMail[listFiles.size()];
+        listFiles.toArray(filesArray);
+        for (FilesFromMail filesFromMail : filesArray) {
+            File file = new File(context.getFilesDir() + filesFromMail.getFileName());
             Path path = file.toPath();
             if (file.exists()) {
                 try {
-                    BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                    if((new Date().getTime() - attrs.creationTime().toMillis())/(48*60*60*1000) > 1){
+                    if (all) {
                         file.delete();
+                        listFiles.remove(filesFromMail);
+                    } else {
+                        BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+                        if ((new Date().getTime() - attrs.creationTime().toMillis()) / (48 * 60 * 60 * 1000) > 1) {
+                            file.delete();
+                            listFiles.remove(filesFromMail);
+                        }
                     }
                 } catch (IOException e) {
-                    ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
+                    ServiceTasks.addLogFile(logFileName, new Date() + ":" + e.toString() + "\n");
+
                 }
             }
         }
     }
-
-
-//    void saveSettings(){
-//        try {
-//            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/ds2.dat"));
-//            objectOS.writeObject(new ArrayList<MessageAgree>(getMessages()));
-//            objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
-//            objectOS.close();
-//        }catch (Exception e){
-//            ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-//            //MainActivity.infoString = e.toString();
-//            //e.printStackTrace();
-//        }
-//    }
-
-//    void loadSettings(){
-//        File fileSer = new File(context.getFilesDir() + "/ds2.dat");
-//        if (fileSer.exists()){
-//            try {
-//                ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
-//                List<MessageAgree> list = (List<MessageAgree>) objectIS.readObject();
-////                synchronized (messages) {
-////                    for (MessageAgree currentM : list) {
-////                        if (!messages.contains(currentM)) {
-////                            messages.add(currentM);
-////                        }
-////                    }
-////                }
-//                setMessages(list);
-//                List<FilesFromMail> listF = (List<FilesFromMail>) objectIS.readObject();
-////                    for(FilesFromMail currentF : listF){
-////                        if (!MainActivity.listFilesFromMail.contains(currentF)){
-////                            if (new File(context.getFilesDir() + currentF.getFileName()).exists())
-////                            MainActivity.listFilesFromMail.add(currentF);
-////                        }
-////                    }
-//                MainActivity.listFilesFromMail = listF;
-//                objectIS.close();
-//            } catch (Exception e){
-//                ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
-//                //MainActivity.infoString = e.toString();
-//                //e.printStackTrace();
-//            }
-//        }
-//    }
-
 }

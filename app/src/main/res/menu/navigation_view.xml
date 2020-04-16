@@ -7,9 +7,9 @@
             android:icon="@drawable/ic_unknown"
             android:title="@string/menu_item_files"/>
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_del_files"
             android:icon="@drawable/ic_unknown"
-            android:title="@string/menu_item_slideshow"/>
+            android:title="@string/menu_item_del_files"/>
         <item
             android:id="@+id/nav_mail_setting_list"
             android:icon="@drawable/ic_unknown"

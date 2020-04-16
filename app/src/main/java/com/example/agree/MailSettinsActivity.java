@@ -33,10 +33,10 @@ public class MailSettinsActivity extends AppCompatActivity {
         buttonSav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.mailTask.setServerName(serverName.getText().toString());
-                MainActivity.mailTask.setPortNumber(portNumber.getText().toString());
-                MainActivity.mailTask.setAccount(account.getText().toString());
-                MainActivity.mailTask.setPass(pass.getText().toString());
+                MainActivity.mailTask.setServerName(serverName.getText().toString().replaceAll(" ","").toLowerCase());
+                MainActivity.mailTask.setPortNumber(portNumber.getText().toString().replaceAll(" ",""));
+                MainActivity.mailTask.setAccount(account.getText().toString().replaceAll(" ","").toLowerCase());
+                MainActivity.mailTask.setPass(pass.getText().toString().replaceAll(" ",""));
                 finish();
             }
         });

@@ -1,6 +1,7 @@
 package com.example.agree;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
     }
 
     class AgViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
+        String infoString = null;
         TextView textViewRW;
         ImageView iconRW;
         public AgViewHolder(@NonNull View itemView) {
@@ -62,12 +63,20 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
 
         void bind(int listIndex){
             StringBuilder strMess = new StringBuilder();
-            if (MainActivity.isShowOldMess() && !ServiceTasks.removeTime(values.get(listIndex).getDateAgr()).equals(ServiceTasks.removeTime(new Date()))) {
+            MessageAgree messageAg = values.get(listIndex);
+            if (MainActivity.isShowOldMess() && !ServiceTasks.removeTime(messageAg.getDateAgr()).equals(ServiceTasks.removeTime(new Date()))) {
                 SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy");
-                strMess.append(formatD.format(values.get(listIndex).getDateAgr()));
+                strMess.append(formatD.format(messageAg.getDateAgr()));
                 strMess.append(" - ");
             }
-            strMess.append(values.get(listIndex).getSubject());
+            strMess.append(messageAg.getSubject());
+            if(!ServiceTasks.removeTime(messageAg.getDateAgr()).equals(ServiceTasks.removeTime(new Date()))){
+                textViewRW.setTextColor(Color.parseColor("#886ED7"));
+            } else if (messageAg.isAgreed()) {
+                textViewRW.setTextColor(Color.parseColor("#CCCCCC"));
+            }else {
+                textViewRW.setTextColor(Color.parseColor("#000000"));
+            }
             textViewRW.setText(strMess.toString());
             iconRW.setImageResource(R.drawable.ic_stop);
             if (values.get(listIndex).getAgrStat().equals("+")) {
@@ -118,9 +127,14 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
                 @Override
                 public void onClick(View v) {
                     MessageAgree messageAgree = values.get(pos);
-                    messageAgree.setAgrStat(messageAgree.getAgrNumInMail());
+                    if (!messageAgree.isAgreed()){
+                        messageAgree.setAgrStat(messageAgree.getAgrNumInMail());
+                    }else {
+                        infoString = "Изменение невозможно, согласование уже отправлено";
+                    }
                     popupWindow.dismiss();
                     ((MainActivity)itemView.getContext()).displayAllMessages();
+                    if (infoString != null) ((MainActivity)itemView.getContext()).snackPopup(infoString);
                 }
             });
             ok.setOnClickListener(new View.OnClickListener() {
@@ -150,9 +164,14 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
 
         private void setStatIcon(PopupWindow popupWindow, int pos, String s){
             MessageAgree messageAgree = values.get(pos);
-            messageAgree.setAgrStat(s);
+            if (!messageAgree.isAgreed()){
+                messageAgree.setAgrStat(s);
+            }else {
+                infoString = "Изменение невозможно, согласование уже отправлено";
+            }
             popupWindow.dismiss();
             ((MainActivity)itemView.getContext()).displayAllMessages();
+            if (infoString != null) ((MainActivity)itemView.getContext()).snackPopup(infoString);
         }
     }
 }
