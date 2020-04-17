@@ -10,14 +10,16 @@ class MessageAgree implements Serializable{
     private String agrStat;
     private Date dateAgr;
     private boolean agreed;
+    private String htmlContent;
 
-    MessageAgree(String id, String subject, String agrStat) {
+    MessageAgree(String id, String subject, String agrStat, String htmlContent) {
         this.id = id;
         this.subject = subject;
         this.agrStat = agrStat;
         this.agrNumInMail = agrStat;
         dateAgr = new Date();
         agreed = false;
+        this.htmlContent = htmlContent;
     }
 
     String getId() {
@@ -48,4 +50,7 @@ class MessageAgree implements Serializable{
         return dateAgr;
     }
 
+    public String getHtmlContent() {
+        return htmlContent;
+    }
 }

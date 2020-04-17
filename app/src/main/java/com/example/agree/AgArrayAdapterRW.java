@@ -53,12 +53,15 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
         String infoString = null;
         TextView textViewRW;
         ImageView iconRW;
+        ImageView iconAt;
         public AgViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewRW =  itemView.findViewById(R.id.textViewRw);
             iconRW =  itemView.findViewById(R.id.iconRw);
+            iconAt = itemView.findViewById(R.id.iconAttach);
             textViewRW.setOnClickListener(this);
             iconRW.setOnClickListener(this);
+            iconAt.setOnClickListener(this);
         }
 
         void bind(int listIndex){
@@ -102,6 +105,9 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
                         }else {
                             ((MainActivity)itemView.getContext()).snackPopup("Это согласование неактуально");
                         }
+                        break;
+                    case R.id.iconAttach:
+                        attachClick(pos, v);
                         break;
                     case R.id.textViewRw:
                         textClick(pos, v);
@@ -158,6 +164,11 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
         }
 
         private void textClick(int pos, View v){
+            MessageAgree messageAgree = values.get(pos);
+            ((MainActivity)itemView.getContext()).openTable(messageAgree);
+        }
+
+        private void attachClick(int pos, View v){
             MessageAgree messageAgree = values.get(pos);
             ((MainActivity)itemView.getContext()).openFileChoose(messageAgree);
         }

@@ -44,6 +44,7 @@ class MailTask {
     private String portNumber;
     private String account;
     private String pass;
+    private String htmlString;
 
     MailTask(Activity context) {
         this.context = context;
@@ -234,9 +235,19 @@ class MailTask {
     }
 
 
-    private void purgeMessagesList(){
+    void purgeMessagesList(){
         if (messages.size() > 0)
         messages.clear();
+    }
+
+    MessageAgree getMessageAgreeForId(String idForMess){
+        MessageAgree findMess = null;
+        for (MessageAgree current : messages){
+            if (current.getId().equals(idForMess)){
+                findMess = current;
+            }
+        }
+        return findMess;
     }
 
     private List<String> getArrId(){
@@ -287,7 +298,8 @@ class MailTask {
                         for (String contractor : listOfContractors) {
                             String[] contractorParam = contractor.split("#");
                             if (contractorParam.length == 2) {
-                                messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0]));
+                                messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0], htmlString));
+                                htmlString = "";
                             } else {
                                 MainActivity.infoString = "incorrect mail format " + iD;
                             }
@@ -334,6 +346,7 @@ class MailTask {
                     strParse.append(part.getContent());
                 } else if (part.isMimeType("text/html")) {
                     String html = (String) part.getContent();
+                    htmlString = html;
                     strParse.append("\n");
                     strParse.append(org.jsoup.Jsoup.parse(html).text());
                 } else if (part.getContent() instanceof MimeMultipart) {

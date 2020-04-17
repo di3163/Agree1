@@ -15,6 +15,7 @@
         <activity android:name=".PDFActivity"/>
         <activity android:name=".MailSettinsActivity"/>
         <activity android:name=".FileChooseActivity" />
+        <activity android:name=".TableHTMLActivity" />
         <activity android:name=".LogActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_del_files:
                         mailTask.delFiles(true);
+                        mailTask.purgeMessagesList();
                         break;
                     case R.id.app_bar_switch:
                         if (showOldMess) {
@@ -178,6 +179,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void openFileChoose(MessageAgree messageAg){
         Intent intent = new Intent(MainActivity.this, FileChooseActivity.class);
+        intent.putExtra("messageID", messageAg.getId());
+        startActivity(intent);
+    }
+
+    public void openTable(MessageAgree messageAg){
+        Intent intent = new Intent(MainActivity.this, TableHTMLActivity.class);
         intent.putExtra("messageID", messageAg.getId());
         startActivity(intent);
     }
