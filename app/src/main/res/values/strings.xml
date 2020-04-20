@@ -15,9 +15,14 @@
     <string name="menu_item_send">Send</string>
     <string name="menu_switch_history">Show history</string>
     <string name="mail_setting_server">Imap server </string>
-    <string name="mail_setting_account">Account </string>
-    <string name="mail_setting_pass">Pass </string>
+    <string name="mail_setting_account">Imap Account </string>
+    <string name="mail_setting_pass">Imap Pass </string>
     <string name="mail_setting_save">Save </string>
-    <string name="mail_setting_port">Port </string>
+    <string name="mail_setting_port">Imap Port </string>
+    <string name="mail_setting_smtp_server">Smtp server </string>
+    <string name="mail_setting_smtp_port">Smtp Port </string>
+    <string name="mail_setting_smtp_account">Smtp Account </string>
+    <string name="mail_setting_smtp_pass">Smtp Pass </string>
     <string name="mail_setting_setting">Mail setting </string>
+
 </resources>

@@ -45,6 +45,10 @@ class MailTask {
     private String account;
     private String pass;
     private String htmlString;
+    private String smtpServer;
+    private String smtpPort;
+    private String smtpAccount;
+    private String smtpPass;
 
     MailTask(Activity context) {
         this.context = context;
@@ -75,6 +79,38 @@ class MailTask {
         return pass;
     }
 
+    public String getSmtpServer() {
+        return smtpServer;
+    }
+
+    public String getSmtpPort() {
+        return smtpPort;
+    }
+
+    public String getSmtpAccount() {
+        return smtpAccount;
+    }
+
+    public String getSmtpPass() {
+        return smtpPass;
+    }
+
+    public void setSmtpServer(String smtpServer) {
+        this.smtpServer = smtpServer;
+    }
+
+    public void setSmtpPort(String smtpPort) {
+        this.smtpPort = smtpPort;
+    }
+
+    public void setSmtpAccount(String smtpAccount) {
+        this.smtpAccount = smtpAccount;
+    }
+
+    public void setSmtpPass(String smtpPass) {
+        this.smtpPass = smtpPass;
+    }
+
     void setServerName(String serverName) {
         this.serverName = serverName;
     }
@@ -96,15 +132,18 @@ class MailTask {
     }
 
     void loadMailsetting(){
-        properties.put("mail.imap.host", getServerName());
-        properties.put("mail.imap.port", getPortNumber());
-        properties.put("mail.imap.starttls.enable", "true");
+        if(!(getServerName().equals("") || getPortNumber().equals("") || getAccount().equals("") ||
+        getSmtpServer().equals("") || getSmtpPort().equals("") || getSmtpAccount().equals(""))) {
+            properties.put("mail.imap.host", getServerName());
+            properties.put("mail.imap.port", getPortNumber());
+            properties.put("mail.imap.starttls.enable", "true");
 
 //        properties.put("mail.transport.protocol", "smtp");
-        propertiesSMTP.put("mail.smtp.host", "smtp.yandex.ru");
-        propertiesSMTP.put("mail.smtp.auth", "true");
-        propertiesSMTP.put("mail.smtp.socketFactory.port", "465");
-        propertiesSMTP.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            propertiesSMTP.put("mail.smtp.host", getSmtpServer());
+            propertiesSMTP.put("mail.smtp.auth", "true");
+            propertiesSMTP.put("mail.smtp.socketFactory.port", getSmtpPort());
+            propertiesSMTP.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        }
 
     }
 
@@ -114,7 +153,7 @@ class MailTask {
                 new Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("", "");
+                        return new PasswordAuthentication(getSmtpAccount(), getSmtpPass());
                     }
                 });
         Message messageSMTP = new MimeMessage(sessionSMTP);
@@ -299,7 +338,7 @@ class MailTask {
                             String[] contractorParam = contractor.split("#");
                             if (contractorParam.length == 2) {
                                 messages.add(new MessageAgree(iD, contractorParam[1], contractorParam[0], htmlString));
-                                htmlString = "";
+                                //htmlString = "";
                             } else {
                                 MainActivity.infoString = "incorrect mail format " + iD;
                             }

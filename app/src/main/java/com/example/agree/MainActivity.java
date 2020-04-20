@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void snackPopup(String textString) {
-        Snackbar snackbar = Snackbar.make((View) activitiMain, textString, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make((View) activitiMain, textString, Snackbar.LENGTH_SHORT);
         View sbView = snackbar.getView();
         sbView.setBackgroundColor(Color.parseColor("#4F4FD9"));
         snackbar.show();

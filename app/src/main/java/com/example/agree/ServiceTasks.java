@@ -32,13 +32,17 @@ public class ServiceTasks {
     public static void saveSettings(Context context, List<MessageAgree> messageAgreeList){
         String logFileName = context.getFilesDir() + "/log.dat";
         try {
-            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/dat6.dat"));
+            ObjectOutputStream objectOS = new ObjectOutputStream(new FileOutputStream(context.getFilesDir() + "/data.dat"));
             objectOS.writeObject(new ArrayList<MessageAgree>(messageAgreeList));
             objectOS.writeObject(new ArrayList<FilesFromMail>(MainActivity.listFilesFromMail));
             objectOS.writeObject(MainActivity.mailTask.getServerName());
             objectOS.writeObject(MainActivity.mailTask.getPortNumber());
             objectOS.writeObject(MainActivity.mailTask.getAccount());
             objectOS.writeObject(MainActivity.mailTask.getPass());
+            objectOS.writeObject(MainActivity.mailTask.getSmtpServer());
+            objectOS.writeObject(MainActivity.mailTask.getSmtpPort());
+            objectOS.writeObject(MainActivity.mailTask.getSmtpAccount());
+            objectOS.writeObject(MainActivity.mailTask.getSmtpPass());
             objectOS.close();
         }catch (Exception e){
             ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
@@ -47,7 +51,7 @@ public class ServiceTasks {
 
     public static void loadSettings(Context context){
         String logFileName = context.getFilesDir() + "/log.dat";
-        File fileSer = new File(context.getFilesDir() + "/dat6.dat");
+        File fileSer = new File(context.getFilesDir() + "/data.dat");
         if (fileSer.exists()){
             try {
                 ObjectInputStream objectIS = new ObjectInputStream(new FileInputStream(fileSer));
@@ -66,6 +70,15 @@ public class ServiceTasks {
                 String passF = (String) objectIS.readObject();
                 MainActivity.mailTask.setPass(passF);
 
+                String serverS = (String) objectIS.readObject();
+                MainActivity.mailTask.setSmtpServer(serverS);
+                String portNumS = (String) objectIS.readObject();
+                MainActivity.mailTask.setSmtpPort(portNumS);
+                String accountS = (String) objectIS.readObject();
+                MainActivity.mailTask.setSmtpAccount(accountS);
+                String passS = (String) objectIS.readObject();
+                MainActivity.mailTask.setSmtpPass(passS);
+
                 objectIS.close();
             } catch (Exception e){
                 ServiceTasks.addLogFile(logFileName, new Date()+":"+e.toString()+"\n");
@@ -75,6 +88,11 @@ public class ServiceTasks {
             MainActivity.mailTask.setPortNumber("");
             MainActivity.mailTask.setAccount("");
             MainActivity.mailTask.setPass("");
+
+            MainActivity.mailTask.setSmtpServer("");
+            MainActivity.mailTask.setSmtpPort("");
+            MainActivity.mailTask.setSmtpAccount("");
+            MainActivity.mailTask.setSmtpPass("");
         }
     }
 

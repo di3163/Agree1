@@ -14,6 +14,11 @@ public class MailSettinsActivity extends AppCompatActivity {
     EditText portNumber;
     EditText account;
     EditText pass;
+    EditText smtpServer;
+    EditText smtpPort;
+    EditText smtpAccount;
+    EditText smtpPass;
+
     Button buttonSav;
 
     @Override
@@ -24,11 +29,20 @@ public class MailSettinsActivity extends AppCompatActivity {
         portNumber = findViewById(R.id.port);
         account = findViewById(R.id.account);
         pass = findViewById(R.id.pass);
+        smtpServer = findViewById(R.id.smtpserver);
+        smtpPort = findViewById(R.id.smtpport);
+        smtpAccount = findViewById(R.id.smtpaccount);
+        smtpPass = findViewById(R.id.smtppass);
+
         buttonSav = (Button) findViewById(R.id.button_save);
         serverName.setText(MainActivity.mailTask.getServerName());
         portNumber.setText(MainActivity.mailTask.getPortNumber());
         account.setText(MainActivity.mailTask.getAccount());
         pass.setText(MainActivity.mailTask.getPass());
+        smtpServer.setText(MainActivity.mailTask.getSmtpServer());
+        smtpPort.setText(MainActivity.mailTask.getSmtpPort());
+        smtpAccount.setText(MainActivity.mailTask.getSmtpAccount());
+        smtpPass.setText(MainActivity.mailTask.getSmtpPass());
 
         buttonSav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +51,12 @@ public class MailSettinsActivity extends AppCompatActivity {
                 MainActivity.mailTask.setPortNumber(portNumber.getText().toString().replaceAll(" ",""));
                 MainActivity.mailTask.setAccount(account.getText().toString().replaceAll(" ","").toLowerCase());
                 MainActivity.mailTask.setPass(pass.getText().toString().replaceAll(" ",""));
+
+                MainActivity.mailTask.setSmtpServer(smtpServer.getText().toString().replaceAll(" ","").toLowerCase());
+                MainActivity.mailTask.setSmtpPort(smtpPort.getText().toString().replaceAll(" ",""));
+                MainActivity.mailTask.setSmtpAccount(smtpAccount.getText().toString().replaceAll(" ","").toLowerCase());
+                MainActivity.mailTask.setSmtpPass(smtpPass.getText().toString().replaceAll(" ",""));
+                MainActivity.mailTask.loadMailsetting();
                 finish();
             }
         });

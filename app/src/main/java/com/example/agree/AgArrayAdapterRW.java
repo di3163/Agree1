@@ -2,6 +2,7 @@ package com.example.agree;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,9 +127,21 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
             int height = LinearLayout.LayoutParams.WRAP_CONTENT;
             boolean focusable = true;
             final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-            int x = (int)v.getX();
-            int y = (int)v.getY();
-            popupWindow.showAsDropDown(v);
+//            int x = (int)v.getX() ;
+//            int y = (int)v.getY() ;
+
+            int[] valS = new int[2];
+            v.getLocationInWindow(valS);
+            int positionOfIcon = valS[1];
+            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            int heightD = (displayMetrics.heightPixels * 2) / 3;
+
+            if (positionOfIcon > heightD){
+                popupWindow.showAsDropDown(v, 0 ,-100);
+            }else {
+                popupWindow.showAsDropDown(v);
+            }
+
             stop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
