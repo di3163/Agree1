@@ -79,37 +79,21 @@ class MailTask {
         return pass;
     }
 
-    public String getSmtpServer() {
-        return smtpServer;
-    }
+    String getSmtpServer() { return smtpServer; }
 
-    public String getSmtpPort() {
-        return smtpPort;
-    }
+    String getSmtpPort() { return smtpPort; }
 
-    public String getSmtpAccount() {
-        return smtpAccount;
-    }
+    String getSmtpAccount() { return smtpAccount; }
 
-    public String getSmtpPass() {
-        return smtpPass;
-    }
+    String getSmtpPass() { return smtpPass; }
 
-    public void setSmtpServer(String smtpServer) {
-        this.smtpServer = smtpServer;
-    }
+    void setSmtpServer(String smtpServer) { this.smtpServer = smtpServer; }
 
-    public void setSmtpPort(String smtpPort) {
-        this.smtpPort = smtpPort;
-    }
+    void setSmtpPort(String smtpPort) { this.smtpPort = smtpPort; }
 
-    public void setSmtpAccount(String smtpAccount) {
-        this.smtpAccount = smtpAccount;
-    }
+    void setSmtpAccount(String smtpAccount) { this.smtpAccount = smtpAccount; }
 
-    public void setSmtpPass(String smtpPass) {
-        this.smtpPass = smtpPass;
-    }
+    void setSmtpPass(String smtpPass) { this.smtpPass = smtpPass; }
 
     void setServerName(String serverName) {
         this.serverName = serverName;
@@ -147,7 +131,7 @@ class MailTask {
 
     }
 
-    boolean sendMess(String s, String currentId) {
+    private boolean sendMess(String s, String currentId) {
         boolean succesfully = false;
         Session sessionSMTP = Session.getInstance(propertiesSMTP,
                 new Authenticator() {
@@ -171,7 +155,7 @@ class MailTask {
     }
 
 
-    public void makeAg(){
+    void makeAg(){
         List<MessageAgree> listActual = selectActualAgree();
         List<String> listShipped = new ArrayList<>();
         String currentId;
@@ -192,7 +176,7 @@ class MailTask {
         }
     }
 
-    public String addAgToMeesage (List<MessageAgree> listActual, String currentId){
+    private String addAgToMeesage (List<MessageAgree> listActual, String currentId){
         StringBuilder messageBuilder = new StringBuilder();
         for (MessageAgree current : listActual) {
             if (current.getId().equals(currentId)) {
@@ -202,7 +186,7 @@ class MailTask {
         return messageBuilder.toString();
     }
 
-    List<MessageAgree> selectActualAgree(){
+    private List<MessageAgree> selectActualAgree(){
         List<MessageAgree> listActual = new ArrayList<>();
         for (MessageAgree currentMess : messages){
             if (!ServiceTasks.removeTime(currentMess.getDateAgr()).equals(ServiceTasks.removeTime(new Date())) || currentMess.isAgreed()) continue;
@@ -211,7 +195,7 @@ class MailTask {
         return listActual;
     }
 
-    String addAgrStatInBody(MessageAgree currM){
+    private String addAgrStatInBody(MessageAgree currM){
         StringBuilder sb = new StringBuilder();
         if (currM.getAgrStat().equals("+")){
             return "";
@@ -229,50 +213,6 @@ class MailTask {
         }
         return sb.toString();
     }
-
-
-    void sendAgree(){
-        List<MessageAgree> listActual = selectActualAgree();
-        List<String> listPostedId = new ArrayList<>();
-        List<String> listShipped = new ArrayList<>();
-        for (MessageAgree current : listActual) {
-            String currentId = null;
-            StringBuilder stringBody = new StringBuilder();
-            for (MessageAgree currentMess : listActual) {
-                if (currentId == null) {
-                    if (!listPostedId.contains(currentMess.getId())) {
-                        listPostedId.add(currentMess.getId());
-                        currentId = currentMess.getId();
-                        stringBody.append(addAgrStatInBody(currentMess));
-                    }
-                } else if (currentId.equals(currentMess.getId())) {
-                    stringBody.append(addAgrStatInBody(currentMess));
-                }
-            }
-            if (!current.isAgreed()) {
-                if (!listShipped.contains(current.getId())) {
-                    String stringB = null;
-                    if (stringBody.toString().equals("")){
-                        stringB = "+";
-
-                    }else {
-                        stringB = stringBody.toString();
-                    }
-                    if (!sendMess(stringB, current.getId())) {
-                        listPostedId.remove(current.getId());
-                        listShipped.remove(current.getId());
-                    } else {
-                        listShipped.add(current.getId());
-                    }
-                }
-            }
-        }
-        for (MessageAgree current : listActual) {
-            if (listShipped.contains(current.getId())) current.setAgreed(true);
-        }
-
-    }
-
 
     void purgeMessagesList(){
         if (messages.size() > 0)

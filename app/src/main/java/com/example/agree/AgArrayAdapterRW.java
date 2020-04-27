@@ -104,7 +104,7 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
                         if(ServiceTasks.removeTime(values.get(pos).getDateAgr()).equals(ServiceTasks.removeTime(new Date()))) {
                             iconClick(pos, v);
                         }else {
-                            ((MainActivity)itemView.getContext()).snackPopup("Это согласование неактуально");
+                            ((MainActivity)itemView.getContext()).snackPopup(context.getString(R.string.ru_info_irrelevant));
                         }
                         break;
                     case R.id.iconAttach:
@@ -149,7 +149,7 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
                     if (!messageAgree.isAgreed()){
                         messageAgree.setAgrStat(messageAgree.getAgrNumInMail());
                     }else {
-                        infoString = "Изменение невозможно, согласование уже отправлено";
+                        infoString = context.getString(R.string.ru_info_already_sended);
                     }
                     popupWindow.dismiss();
                     ((MainActivity)itemView.getContext()).displayAllMessages();
@@ -191,7 +191,7 @@ public class AgArrayAdapterRW extends RecyclerView.Adapter<AgArrayAdapterRW.AgVi
             if (!messageAgree.isAgreed()){
                 messageAgree.setAgrStat(s);
             }else {
-                infoString = "Изменение невозможно, согласование уже отправлено";
+                infoString = context.getString(R.string.ru_info_already_sended);
             }
             popupWindow.dismiss();
             ((MainActivity)itemView.getContext()).displayAllMessages();

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private AgArrayAdapterRW agArrayAdapterRW;
     AsTask asTask;
     static List<FilesFromMail> listFilesFromMail = new ArrayList<>();
-    private ImageView stop, ok, wait, ab;
+   // private ImageView stop, ok, wait, ab;
     static String infoString;
     Timer mTimer = new Timer();
     final Handler uiHandler = new Handler();
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         mFloatingNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                Snackbar.make((View) mFloatingNavigationView.getParent(), item.getTitle() + " Selected!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make((View) mFloatingNavigationView.getParent(), item.getTitle(), Snackbar.LENGTH_SHORT).show();
                 switch ( item.getItemId()){
                     case R.id.nav_files:
                         onButtonFilesClic();
@@ -89,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.app_bar_switch:
                         if (showOldMess) {
                             showOldMess = false;
-                            item.setTitle("Show history");
+                            item.setTitle(getString(R.string.ru_menu_s_history));
+                            displayAllMessages();
                         } else {
                             showOldMess = true;
-                            item.setTitle("Hide history");
+                            item.setTitle(getString(R.string.ru_menu_h_history));
+                            displayAllMessages();
                         }
-                        displayAllMessages();
+                        //displayAllMessages();
                 }
                 mFloatingNavigationView.close();
                 return true;
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mailTask.refreshListMessages();
-                infoString = "Список сообщений обновлен " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+                infoString = getString(R.string.ru_info_update) + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
                 uiHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -115,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0L, 60L * 5000);
+
+        displayAllMessages();
     }
 
     @Override
@@ -156,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
         protected void onPostExecute(String result){
-            infoString = "Список сообщений обновлен " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+            infoString = getString(R.string.ru_info_update) + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
             snackPopup(infoString);
             displayAllMessages();
         }
@@ -171,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result){
-            infoString = "Согласования отправлены " + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+            infoString = getString(R.string.ru_info_sended) + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
             snackPopup(infoString);
             displayAllMessages();
         }
@@ -186,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
     public void openTable(MessageAgree messageAg){
         Intent intent = new Intent(MainActivity.this, TableHTMLActivity.class);
         intent.putExtra("messageID", messageAg.getId());
+        intent.putExtra("agrNumInMail", messageAg.getAgrNumInMail());
         startActivity(intent);
     }
 
@@ -213,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        //displayAllMessages();
         super.onStart();
     }
 
@@ -238,8 +244,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onResume() {
-        snackPopup(infoString);
-        displayAllMessages();
+        //snackPopup(infoString);
+        //displayAllMessages();
         super.onResume();
     }
 

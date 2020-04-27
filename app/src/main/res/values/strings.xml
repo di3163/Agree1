@@ -4,8 +4,8 @@
     <string name="messages">Messages</string>
     <string name="service">Files</string>
 
-    <string name="developer">Dimon</string>
-    <string name="website">merida-di@yandex.ru</string>
+    <string name="developer">IT</string>
+    <string name="website">vintegra.ru</string>
     <string name="menu_item_download">Download messages</string>
     <string name="menu_item_files">Application files</string>
     <string name="menu_item_del_files">Delite files</string>
@@ -25,4 +25,17 @@
     <string name="mail_setting_smtp_pass">Smtp Pass </string>
     <string name="mail_setting_setting">Mail setting </string>
 
+    <string name="ru_menu_group_communicate">Обмен</string>
+    <string name="ru_menu_item_send">Отправить согласования</string>
+    <string name="ru_menu_item_download">Проверить новые запросы</string>
+    <string name="ru_menu_s_history">Показать историю</string>
+    <string name="ru_menu_h_history">Скрыть историю</string>
+    <string name="ru_menu_item_setting">Настройки почты</string>
+    <string name="ru_menu_item_file">Служебные файлы</string>
+    <string name="ru_menu_item_del">Удалить файлы</string>
+
+    <string name="ru_info_update">Список сообщений обновлен </string>
+    <string name="ru_info_sended">Согласования отправлены  </string>
+    <string name="ru_info_already_sended">Изменение невозможно, согласование уже отправлено  </string>
+    <string name="ru_info_irrelevant">Это согласование неактуально</string>
 </resources>
